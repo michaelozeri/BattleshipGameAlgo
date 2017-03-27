@@ -1,0 +1,10 @@
+========================================================================
+   comments for project
+========================================================================
+
+michael:
+
+-file sboard contains both ships of A & B on one "board", A boats cant be on B boats and the opposite.
+-can attack same place on ship twice
+
+
