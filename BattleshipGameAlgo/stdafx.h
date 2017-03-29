@@ -9,9 +9,12 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iterator>
 
 
 
 // TODO: reference additional headers your program requires here
 
-private int LookForFiles();
