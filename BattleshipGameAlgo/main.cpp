@@ -35,12 +35,7 @@ int main(int argc, char* argv[]) {
 
 	//for debugging
 	char c;
-	:cin >> c;
-
-	return 0;
-}
-
-private int LookForFiles() {
+	cin >> c;
 
 	return 0;
 }
