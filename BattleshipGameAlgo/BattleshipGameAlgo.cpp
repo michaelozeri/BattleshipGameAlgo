@@ -11,11 +11,16 @@ std::pair<int,int> BattleshipGameAlgo::attack() {
 	return p1;
 }
 
-void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) {
 
+void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) {
+	
 }
+
 
 void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result) {
 
 }
 
+void BattleshipGameAlgo::addToScore(int num) {
+	_currentscore += num;
+}

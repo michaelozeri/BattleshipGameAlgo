@@ -3,6 +3,8 @@
 #include <utility> // for std::pair
 #include <iostream>
 #include <string>
+#include <fstream>
+
 
 
 enum class AttackResult {
