@@ -11,29 +11,51 @@
 #define COLS 10
 
 #include <fstream>
-#include "main.h"
+#include "main.h" //TODO: remove?
+
+int MakeMainBattleBoard(std::string path, std::string* fullGameBoard, int rows, int cols)
+{
+	std::cout << "Reading battleBoard from file: " << path << "board.sboard into class BattleBoard" << std::endl;
+	std::ifstream fin(path + "board.sboard");
+	//fin.ignore(); //skip newline and go the begining of matrix
+	fullGameBoard = new std::string[rows];
+	for (int i = 0; i <rows; ++i)
+	{
+		std::getline(fin, fullGameBoard[i]);
+	}
+	//TODO: check that fullgameboard is ok
+	return 0;
+}
 
 using namespace std; //TODO: remove
 
 int main(int argc, char* argv[]) {
 
-	char fullGameBoard[ROWS][COLS];//this is the main game board - initialized to 10X10 matrix
-	string path = nullptr; //path to enter the non-default path to files
+	std::string fullGameBoard[ROWS];//this is the main game board 
+	std::string path = nullptr; //path to enter the non-default path to files, set to nullptr at default
 	std::pair<int, int> temppair;
-	AttackResult attackresult;
+	AttackResult tempattackresult;
 	bool skipA = false, skipB = false; //bool for knowing if to give another turn to A or B
 	if (argc > 1) {
 		path = argv[1];
 	}
 
 	//find *.sboard file at path.
-	std::string temprow;
+	//std::ifstream mainboard( path + "board.sboard"); //TODO: check if we can guess the filename or try open all file with extension
+	//if (!mainboard) {
+	//	std::cout << "didnt manage to open board on path given, trying on working directory" << std::endl;
+	//	mainboard.open("*.sboard");
+	//}
 
-	std::ifstream mainboard(path);
+	//std::string temprow("hellllo");
+	//for (int i = 0; i < ROWS; i++) {
+	//	getline(mainboard, temprow);
+	//	temprow.copy(fullGameBoard[i], COLS-1, 0);
+	//}
 
-	for (int i = 0; i < ROWS; i++) {
-		getline(mainboard, temprow);
-		temprow.copy(fullGameBoard[i], COLS-1, 0);
+	if (MakeMainBattleBoard(path, fullGameBoard, ROWS, COLS) == -1) {
+		std::cout << "battle board recieved is bad, exiting program" << std::endl;
+		return -1;
 	}
 
 	//fullGameBoard is filled up
@@ -51,11 +73,11 @@ int main(int argc, char* argv[]) {
 			}
 			else {
 				//calculate attack -TODO: mordi
-				attackresult = AttackResult::Hit;
+				tempattackresult = AttackResult::Hit;
 				//update players
-				playerA.notifyOnAttackResult(0, temppair.first, temppair.second, attackresult);
-				playerB.notifyOnAttackResult(0, temppair.first, temppair.second, attackresult);
-				if ((attackresult == AttackResult::Hit) || (attackresult == AttackResult::Sink)) {
+				playerA.notifyOnAttackResult(0, temppair.first, temppair.second, tempattackresult);
+				playerB.notifyOnAttackResult(0, temppair.first, temppair.second, tempattackresult);
+				if ((tempattackresult == AttackResult::Hit) || (tempattackresult == AttackResult::Sink)) {
 					skipB = true;
 				}
 			}
@@ -68,11 +90,11 @@ int main(int argc, char* argv[]) {
 			}
 			else {
 				//calculate attack -TODO: mordi
-				attackresult = AttackResult::Hit;
+				tempattackresult = AttackResult::Hit;
 				//update players
-				playerA.notifyOnAttackResult(1, temppair.first, temppair.second, attackresult);
-				playerB.notifyOnAttackResult(1, temppair.first, temppair.second, attackresult);
-				if ((attackresult == AttackResult::Hit) || (attackresult == AttackResult::Sink)) {
+				playerA.notifyOnAttackResult(1, temppair.first, temppair.second, tempattackresult);
+				playerB.notifyOnAttackResult(1, temppair.first, temppair.second, tempattackresult);
+				if ((tempattackresult == AttackResult::Hit) || (tempattackresult == AttackResult::Sink)) {
 					skipA = true;
 				}
 			}
