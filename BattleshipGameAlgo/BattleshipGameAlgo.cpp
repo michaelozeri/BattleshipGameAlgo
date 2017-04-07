@@ -12,7 +12,7 @@ BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int
 	cout << "non - default constructor" << endl;
 }
 
-/**
+/*
  * \brief 
  * \return (0,0) in case of EOF. (-1, -1) in case of any failure
  */
@@ -37,8 +37,7 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) 
 {
-	
-	_board = utils.GetNewBoard();
+	_board = utils.AllocateNewBoard();
 	utils.CloneBoardToPlayer(board, _myPlayerNum, _board);
 	std::cout << "finished copying array" << std::endl;
 }
@@ -79,7 +78,7 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 }
 
 //getter for if the attacks are finished
-bool BattleshipGameAlgo::FinishedAttacks() const
+bool BattleshipGameAlgo::AttacksDone() const
 {
 	return _attacksDone;
 }
@@ -196,173 +195,165 @@ void GameBordUtils::InitBoard(char** board, int rows, int cols)
 		}
 	}
 
-	bool GameBordUtils::IsPlayerIdChar(int playerID, char current) const
+bool GameBordUtils::IsPlayerIdChar(int playerID, char current){
+	if (playerID == PlayerAID)
 	{
-		if (playerID == PlayerAID)
+		return current == RubberBoatA ||
+			current == RocketShipA ||
+			current == SubmarineA ||
+			current == DestroyerA;
+	}
+	if (playerID == PlayerBID)
+	{
+		return  current == RubberBoatB ||
+			current == RocketShipB ||
+			current == SubmarineB ||
+			current == DestroyerB;
+	}
+	return false;
+}
+
+bool GameBordUtils::IsLegalBoradChar(char current){
+	return IsPlayerIdChar(PlayerAID, current) || IsPlayerIdChar(PlayerBID, current);
+}
+
+void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs){
+	char* currentRow = board[row];
+	unsigned long long len = cs.length() < cols ? cs.length() : cols;
+	for (size_t i = 0; i < len; i++)
+	{
+		char currentChar = cs[i];
+		currentRow[i] = IsLegalBoradChar(currentChar) ? currentChar : BLANK;
+	}
+}
+
+char** GameBordUtils::AllocateNewBoard(){
+	char** board = new char*[ROWS];
+	for (int i = 0; i < ROWS; ++i)
+		board[i] = new char[COLS];
+	return board;
+}
+
+void GameBordUtils::DeleteBoard(char** board){
+	// Delete board array
+	for (int i = 0; i < ROWS; ++i) {
+		delete[] board[i];
+	}
+	delete[] board;
+}
+
+BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath){
+	//set all board to blank
+	InitBoard(board, rows, cols);
+
+	FileReader fileReader(filePath);
+
+	int row = 0;
+	while (!fileReader.IsEof() || row == 10)
+	{
+		string line;
+		fileReader.ReadLine(line);
+		LoadLineToBoard(board, row, cols, line);
+		row++;
+	}
+
+	fileReader.CloseFile();
+
+	// TODO:  Validate char** board return BoardFileErrorCode::other error code
+	return BoardFileErrorCode::Success;
+}
+
+void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols){
+	stream << "######Game Board######" << endl;
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
 		{
-			return current == RubberBoatA ||
-				current == RocketShipA ||
-				current == SubmarineA ||
-				current == DestroyerA;
+			stream << board[i][j];
 		}
-		if (playerID == PlayerBID)
+		stream << endl;
+	}
+	stream << "###End Game Board######" << endl;
+}
+
+void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board){
+	InitBoard(player_board, ROWS, COLS);
+
+	for (size_t i = 0; i < ROWS; i++)
+	{
+		for (size_t j = 0; j < COLS; j++)
 		{
-			return  current == RubberBoatB ||
-				current == RocketShipB ||
-				current == SubmarineB ||
-				current == DestroyerB;
+			player_board[i][j] = IsPlayerIdChar(playerID, full_board[i][j]) ? full_board[i][j] : player_board[i][j];
 		}
-		return false;
 	}
+}
 
-	bool GameBordUtils::IsLegalBoradChar(char current) const
+ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), borad(board){
+	for (size_t i = 0; i < ROWS; i++)
 	{
-		return IsPlayerIdChar(PlayerAID, current) || IsPlayerIdChar(PlayerBID, current);
-	}
-
-	void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs)
-	{
-		char* currentRow = board[row];
-		unsigned long long len = cs.length() < cols ? cs.length() : cols;
-		for (size_t i = 0; i < len; i++)
+		for (size_t j = 0; j < COLS; j++)
 		{
-			char currentChar = cs[i];
-			currentRow[i] = IsLegalBoradChar(currentChar) ? currentChar : BLANK;
-		}
-	}
-
-	char** GameBordUtils::GetNewBoard()
-	{
-		char** board = new char*[ROWS];
-		for (int i = 0; i < ROWS; ++i)
-			board[i] = new char[COLS];
-		return board;
-	}
-
-	void GameBordUtils::DeleteBoard(char** board)
-	{
-		// Delete board array
-		for (int i = 0; i < ROWS; ++i) {
-			delete[] board[i];
-		}
-		delete[] board;
-	}
-
-	BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath)
-	{
-		InitBoard(board, rows, cols);
-
-		FileReader fileReader(filePath);
-
-		int row = 0;
-		while (!fileReader.IsEof() || row == 10)
-		{
-			string line;
-			fileReader.ReadLine(line);
-			LoadLineToBoard(board, row, cols, line);
-			row++;
-		}
-
-		fileReader.CloseFile();
-
-		// TODO - Validate board
-		return BoardFileErrorCode::Success;
-	}
-
-	void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) const
-	{
-		stream << "######Game Board######" << endl;
-		for (size_t i = 0; i < rows; i++)
-		{
-			for (size_t j = 0; j < cols; j++)
+			char cell = board[i][j];
+			if(_utils.IsPlayerIdChar(playerID,cell))
 			{
-				stream << board[i][j];
-			}
-			stream << endl;
-		}
-		stream << "###End Game Board######" << endl;
-	}
-
-	void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board)
-	{
-		InitBoard(player_board, ROWS, COLS);
-
-		for (size_t i = 0; i < ROWS; i++)
-		{
-			for (size_t j = 0; j < COLS; j++)
-			{
-				player_board[i][j] = IsPlayerIdChar(playerID, full_board[i][j]) ? full_board[i][j] : player_board[i][j];
-			}
-		}
-	}
-
-	ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), borad(board)
-	{
-		for (size_t i = 0; i < ROWS; i++)
-		{
-			for (size_t j = 0; j < COLS; j++)
-			{
-				char cell = board[i][j];
-				if(_utils.IsPlayerIdChar(playerID,cell))
+				switch (tolower(cell))
 				{
-					switch (tolower(cell))
-					{
-					case RubberBoatB:
-						RubberBoatCells++;
-						break;
-					case RocketShipB:
-						RocketShipCells++;
-						break;
-					case SubmarineB:
-						SubmarineCells++;
-						break;
-					case DestroyerB:
-						DestroyeCells++;
-						break;
-					default:
-						break;
-					}
+				case RubberBoatB:
+					RubberBoatCells++;
+					break;
+				case RocketShipB:
+					RocketShipCells++;
+					break;
+				case SubmarineB:
+					SubmarineCells++;
+					break;
+				case DestroyerB:
+					DestroyeCells++;
+					break;
+				default:
+					break;
 				}
 			}
 		}
 	}
+}
 
 /**
-	 * \brief Attack on the current player
-	 * \param attack 
-	 * \return AtackResult enum instance and update the board
-	 */
-	AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
+* \brief Attack on the current player
+* \param attack 
+* \return AtackResult enum instance and update the board
+*/
+AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
+{
+	char cell = borad[attack.first][attack.second];
+	if(_utils.IsPlayerIdChar(playerID, cell))
 	{
-		char cell = borad[attack.first][attack.second];
-		if(_utils.IsPlayerIdChar(playerID, cell))
+		borad[attack.first][attack.second] = '@';
+		switch (tolower(cell))
 		{
-			borad[attack.first][attack.second] = '@';
-			switch (tolower(cell))
-			{
-			case 'b':
-				RubberBoatCells--;
-				return RubberBoatCells % RubberBoatW == 0 ? AttackResult::Sink : AttackResult::Hit;
-			case 'p':
-				RocketShipCells--;
-				return RocketShipCells % RocketShipW == 0 ? AttackResult::Sink : AttackResult::Hit;
-			case 'm':
-				SubmarineCells--;
-				return SubmarineCells % SubmarineW == 0 ? AttackResult::Sink : AttackResult::Hit;
-			case 'd':
-				DestroyeCells--;
-				return DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
-			default:
-				// Restore the previous value - should not get here
-				borad[attack.first][attack.second] = cell;
-				break;
-			}
+		case 'b':
+			RubberBoatCells--;
+			return RubberBoatCells % RubberBoatW == 0 ? AttackResult::Sink : AttackResult::Hit;
+		case 'p':
+			RocketShipCells--;
+			return RocketShipCells % RocketShipW == 0 ? AttackResult::Sink : AttackResult::Hit;
+		case 'm':
+			SubmarineCells--;
+			return SubmarineCells % SubmarineW == 0 ? AttackResult::Sink : AttackResult::Hit;
+		case 'd':
+			DestroyeCells--;
+			return DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
+		default:
+			// Restore the previous value - should not get here
+			borad[attack.first][attack.second] = cell;
+			break;
 		}
-		return AttackResult::Miss;
 	}
+	return AttackResult::Miss;
+}
 
-	bool ShipDetatilsBoard::IsLoose() const
-	{
-		int sum = RubberBoatCells + RocketShipCells + SubmarineCells + DestroyeCells;
-		return (sum == 0);
-	}
+bool ShipDetatilsBoard::IsLoose() const
+{
+	int sum = RubberBoatCells + RocketShipCells + SubmarineCells + DestroyeCells;
+	return (sum == 0);
+}

@@ -5,52 +5,99 @@
 #include <algorithm>
 #include "main.h" //TODO: remove?
 
+/*script to find path of files taken from: 
+http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c 
+*/
+
 
 using namespace std;
 
 Logger AppLogger;
-/**
- * \brief 
- * \param argc 
- * \param argv 
- * \return "" in case error eccured
- * TODO: Missing implemenation 
+/*
+ * @param argc 
+ * @param argv 
+ * @return path to .sboard file (non-default / "" in case the working directory is chosen )
+ * @return "ERR" in case of error / file not found
  */
 string GetBoardFilePath(int argc, char** argv)
 {
-	//TODO
-	//find *.sboard file at path.
-	//std::ifstream mainboard( path + "board.sboard"); //TODO: check if we can guess the filename or try open all file with extension
-	//if (!mainboard) {
-	//	std::cout << "didnt manage to open board on path given, trying on working directory" << std::endl;
-	//	mainboard.open("*.sboard");
-	//}
-	return "a.txt";
-	//return "";
+	string nondefaultpath;
+	string systemcallcommand;
+	string templine;
+	if (argc > 1) {
+		nondefaultpath = argv[1];
+		systemcallcommand = "dir " + nondefaultpath + " /b /a-d > file_names.txt";
+		system(systemcallcommand.c_str());
+		ifstream nondefaultstream("file_names.txt");
+		while (true) {
+			getline(nondefaultstream, templine);
+			if (nondefaultstream.eof()) {
+				cout << ".sboard file was not found in path given" << endl;
+				break;
+			}
+			std::string delimiter = ".";
+			size_t pos = 0;
+			std::string token;
+			while ((pos = templine.find(delimiter)) != std::string::npos) {
+				token = templine.substr(0, pos);
+				if (strcmp(token.c_str(), "sboard")) {
+					cout << ".sboard file was found in path given" << endl;
+					nondefaultstream.close();
+					return nondefaultpath; //if we found a file with suffix .sboard then return the non-default file path
+				}
+				templine.erase(0, pos + delimiter.length());
+			}
+		}
+		nondefaultstream.close();
+	}
+	//file not found in non-default directory
+	systemcallcommand = "dir /b /a-d > file_names_working.txt";
+	system(systemcallcommand.c_str());
+	ifstream defaultpathstream("file_names_working.txt");
+	while (true) {
+		getline(defaultpathstream, templine);
+		if (defaultpathstream.eof()) {
+			cout << ".sboard file was not found at all!" << endl;
+			defaultpathstream.close();
+			return "ERR";
+		}
+		std::string delimiter = ".";
+		size_t pos = 0;
+		std::string token;
+		while ((pos = templine.find(delimiter)) != std::string::npos) {
+			token = templine.substr(0, pos);
+			if (strcmp(token.c_str(), "sboard")) {
+				cout << ".sboard file was found in working directory" << endl;
+				defaultpathstream.close();
+				return ""; //if we found a file with suffix .sboard then return the working directory file path
+			}
+			templine.erase(0, pos + delimiter.length());
+		}
+	}
 }
 
-char** ClonePlayerBoard(const char** fullBoard, int i, GameBordUtils& gameBoardUtils)
+char** ClonePlayerBoard(const char** fullBoard, int i)
 {
-	char** playerBoard = gameBoardUtils.GetNewBoard();
-	gameBoardUtils.CloneBoardToPlayer(fullBoard, i, playerBoard);
+	char** playerBoard = GameBordUtils::AllocateNewBoard();
+	GameBordUtils::CloneBoardToPlayer(fullBoard, i, playerBoard);
 	return playerBoard;
 }
 
-void SetPlayerBoards(GameBordUtils& gameBoardUtils, char** board, string path, BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
+void SetPlayerBoards(char** board, string path, BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
 {
-	char** playerAboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerAID, gameBoardUtils);
+	char** playerAboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
 	AppLogger.logFile << "CloneBoardForA" << endl;
-	gameBoardUtils.PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
+	GameBordUtils::PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
 
-	char** playerBboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerBID, gameBoardUtils);
+	char** playerBboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
 	AppLogger.logFile << "CloneBoardForB" << endl;
-	gameBoardUtils.PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
+	GameBordUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
 
 	playerA.setBoard(const_cast<const char**>(playerAboard), ROWS, COLS);
 	playerB.setBoard(const_cast<const char**>(playerBboard), ROWS, COLS);
 
-	gameBoardUtils.DeleteBoard(playerAboard);
-	gameBoardUtils.DeleteBoard(playerBboard);
+	GameBordUtils::DeleteBoard(playerAboard);
+	GameBordUtils::DeleteBoard(playerBboard);
 }
 
 void InitLogger()
@@ -92,42 +139,44 @@ void PrintPoints(BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
 int main(int argc, char* argv[]) 
 {
 	InitLogger();
-	GameBordUtils gameBoardUtils;
 
-	string boardPath = GetBoardFilePath(argc, argv);
-	if (boardPath == "")
+	string boardPath = GetBoardFilePath(argc, argv); //TODO: finish attaching file name not only path
+	if (boardPath == "ERR") {
+		cout << "ERROR occured while getting board path" << endl;
 		return -1;
+	}
 
 	// board - will save updated and full board of two players
-	char** board = gameBoardUtils.GetNewBoard();
+	char** maingameboard = GameBordUtils::AllocateNewBoard();
 	
-	if(gameBoardUtils.LoadBoardFromFile(board, ROWS, COLS, boardPath)!= BoardFileErrorCode::Success)
+	if(GameBordUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, boardPath)!= BoardFileErrorCode::Success)
 	{
 		return -1;
 	}
-	gameBoardUtils.PrintBoard(AppLogger.logFile, board, ROWS, COLS);
+	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
 	string path = ""; //path to enter the non-default path to files, set to nullptr at default
 
 	// Init players Instances
 	BattleshipGameAlgo playerA("b.txt", PlayerAID);
 	BattleshipGameAlgo playerB("c.txt", PlayerBID);
-	SetPlayerBoards(gameBoardUtils, board, path, playerA, playerB);
+	SetPlayerBoards(maingameboard, path, playerA, playerB);
 	
-	ShipDetatilsBoard playerAboardDetails(board, PlayerAID);
-	ShipDetatilsBoard playerBboardDetails(board, PlayerBID);
+	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside
+	ShipDetatilsBoard playerAboardDetails(maingameboard, PlayerAID);
+	ShipDetatilsBoard playerBboardDetails(maingameboard, PlayerBID);
 
 	int playerIdToPlayNext = PlayerAID;
 
 	//main game play
 
 	// While not both of players ended their attacks
-	while (!playerA.FinishedAttacks() && !playerB.FinishedAttacks())
+	while (!playerA.AttacksDone() && !playerB.AttacksDone())
 	{
 		pair<int, int> tempPair = GetNextPlayerAttack(playerIdToPlayNext, playerA, playerB);
 		if ((tempPair.first == -1) && (tempPair.second == -1))
 		{
-			//TODO: Error occured during reading from file Dispose all and exit gracefully
+			//TODO: Error occured during reading from file. Dispose all and exit gracefully - use dtor using delete
 			return -1;
 		}
 
@@ -169,7 +218,8 @@ int main(int argc, char* argv[])
 	// TODO - Dispose all resources
 	PrintPoints(playerA, playerB);
 
-	gameBoardUtils.DeleteBoard(board);
+	//TODO - delete mainboard, dtor for shipdetails & gameutils?
+	GameBordUtils::DeleteBoard(maingameboard);
 	AppLogger.LoggerDispose();
 	return 0;
 }
