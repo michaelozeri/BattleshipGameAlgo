@@ -5,7 +5,9 @@
 #include "Contants.h"
 
 
-
+/*
+* a utility class for handeling all attack functionalities
+*/
 class AttackReciever{
 	string path;
 	ifstream _file;
@@ -18,10 +20,9 @@ public:
 };
 
 /*
-* a class for performing static functions at main function
+* a utility class for performing static functions at main function
 */
-class GameBordUtils
-{
+class GameBordUtils{
 public:
 	static void InitBoard(char** board, int rows, int cols);
 	static bool IsPlayerIdChar(int playerID, char current);
@@ -34,8 +35,10 @@ public:
 	static void CloneBoardToPlayer(const char** full_board, int playerID, char** player_board);
 };
 
-class ShipDetatilsBoard
-{
+/*
+* a utility class for keeping track of game state
+*/
+class ShipDetatilsBoard{
 	GameBordUtils _utils;
 public:
 	int playerID;
@@ -51,7 +54,10 @@ public:
 	bool IsLoose() const;
 };
 
-//class for each player
+/*
+* a class that represents a player at the game
+* holds the current information of the player while playing the game
+*/
 class BattleshipGameAlgo : public IBattleshipGameAlgo {
 private:
 	int _currentscore; //my score until now
