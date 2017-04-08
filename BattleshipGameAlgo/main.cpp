@@ -4,15 +4,15 @@
 #include "IOLib.h"
 #include <algorithm>
 
-
 using namespace std;
 
 //a logger instance to log all data. initialized at main
 Logger AppLogger;
 
 /*
- * @param argc 
- * @param argv 
+ * @param argc - of main program 
+ * @param argv - of main program
+ * @param filesuffix - the suffix of the file we are searching for
  * @return path to .sboard file (non-default / "" in case the working directory is chosen )
  * @return "ERR" in case of error / file not found
  */
@@ -134,8 +134,8 @@ int main(int argc, char* argv[])
 {
 	InitLogger();
 
-	string boardPath = GetFilePathBySuffix(argc, argv,".sboard"); //TODO: finish attaching file name not only path
-	if (boardPath == "ERR") {
+	string mainboardpath = GetFilePathBySuffix(argc, argv,".sboard"); 
+	if (mainboardpath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
 		return -1;
 	}
@@ -143,17 +143,30 @@ int main(int argc, char* argv[])
 	// board - will save updated and full board of two players
 	char** maingameboard = GameBordUtils::AllocateNewBoard();
 	
-	if(GameBordUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, boardPath)!= BoardFileErrorCode::Success)
+	if(GameBordUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, mainboardpath)!= BoardFileErrorCode::Success)
 	{
 		return -1;
 	}
 	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
-	string path = ""; //path to enter the non-default path to files, set to nullptr at default
+	string path = ""; //path to enter the non-default path to files, set to nullptr at default //TODO: is this needed? i think not. (mordi)
+	string Aattackpath, Battackpath;
+	Aattackpath = GetFilePathBySuffix(argc, argv, ".attack-a");
+	if (Aattackpath == "ERR") {
+		cout << "ERROR in retrieving attack file of player A" << endl;
+		//TODO: release all data
+		return -1;
+	}
+	Battackpath = GetFilePathBySuffix(argc, argv, ".attack-b");
+	if (Battackpath == "ERR") {
+		cout << "ERROR in retrieving attack file of player B" << endl;
+		//TODO: release all data
+		return -1;
+	}
 
 	// Init players Instances
-	BattleshipGameAlgo playerA("b.txt", PlayerAID);
-	BattleshipGameAlgo playerB("c.txt", PlayerBID);
+	BattleshipGameAlgo playerA(Aattackpath, PlayerAID);
+	BattleshipGameAlgo playerB(Battackpath, PlayerBID);
 	SetPlayerBoards(maingameboard, path, playerA, playerB);
 	
 	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside
