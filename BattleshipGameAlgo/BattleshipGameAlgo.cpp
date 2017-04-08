@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "BattleshipGameAlgo.h"
-#include "main.h"
 #include <algorithm>
 
 //non - default constructor

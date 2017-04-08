@@ -5,8 +5,7 @@
 
 using namespace std;
 
-class FileReader
-{
+class FileReader{
 private:
 	std::string filePath;
 	std::ifstream fin;
@@ -41,8 +40,10 @@ public:
 	}
 };
 
-class Logger
-{
+/*
+* a logger for the program. will write all the outputs to a log file for more easy debugging
+*/
+class Logger{
 public:
 	std::ofstream logFile;
 

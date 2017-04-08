@@ -3,23 +3,20 @@
 #include "BattleshipGameAlgo.h"
 #include "IOLib.h"
 #include <algorithm>
-#include "main.h" //TODO: remove?
-
-/*script to find path of files taken from: 
-http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c 
-*/
 
 
 using namespace std;
 
+//a logger instance to log all data. initialized at main
 Logger AppLogger;
+
 /*
  * @param argc 
  * @param argv 
  * @return path to .sboard file (non-default / "" in case the working directory is chosen )
  * @return "ERR" in case of error / file not found
  */
-string GetBoardFilePath(int argc, char** argv)
+string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 {
 	string nondefaultpath;
 	string systemcallcommand;
@@ -32,20 +29,18 @@ string GetBoardFilePath(int argc, char** argv)
 		while (true) {
 			getline(nondefaultstream, templine);
 			if (nondefaultstream.eof()) {
-				cout << ".sboard file was not found in path given" << endl;
+				cout <<  filesuffix +" file was not found in non-default path given" << endl;
 				break;
 			}
-			std::string delimiter = ".";
+			string delimiter = ".";
 			size_t pos = 0;
-			std::string token;
-			while ((pos = templine.find(delimiter)) != std::string::npos) {
-				token = templine.substr(0, pos);
-				if (strcmp(token.c_str(), "sboard")) {
-					cout << ".sboard file was found in path given" << endl;
-					nondefaultstream.close();
-					return nondefaultpath; //if we found a file with suffix .sboard then return the non-default file path
-				}
-				templine.erase(0, pos + delimiter.length());
+			string filename, suffix;
+			pos = templine.find(delimiter);
+			suffix = templine.substr(pos, templine.length());
+			filename = templine.substr(0, pos);
+			if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
+				nondefaultstream.close();
+				return nondefaultpath + filename + suffix; //TODO: persume argument is inserted with '\' at string ending
 			}
 		}
 		nondefaultstream.close();
@@ -57,23 +52,22 @@ string GetBoardFilePath(int argc, char** argv)
 	while (true) {
 		getline(defaultpathstream, templine);
 		if (defaultpathstream.eof()) {
-			cout << ".sboard file was not found at all!" << endl;
+			cout << filesuffix+ " file was not found in working directory" << endl;
 			defaultpathstream.close();
 			return "ERR";
 		}
-		std::string delimiter = ".";
+		string delimiter = ".";
 		size_t pos = 0;
-		std::string token;
-		while ((pos = templine.find(delimiter)) != std::string::npos) {
-			token = templine.substr(0, pos);
-			if (strcmp(token.c_str(), "sboard")) {
-				cout << ".sboard file was found in working directory" << endl;
-				defaultpathstream.close();
-				return ""; //if we found a file with suffix .sboard then return the working directory file path
-			}
-			templine.erase(0, pos + delimiter.length());
+		string filename, suffix;
+		pos = templine.find(delimiter);
+		suffix = templine.substr(pos, templine.length());
+		filename = templine.substr(0, pos);
+		if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
+			defaultpathstream.close();
+			return filename + suffix;
 		}
 	}
+	defaultpathstream.close();
 }
 
 char** ClonePlayerBoard(const char** fullBoard, int i)
@@ -140,7 +134,7 @@ int main(int argc, char* argv[])
 {
 	InitLogger();
 
-	string boardPath = GetBoardFilePath(argc, argv); //TODO: finish attaching file name not only path
+	string boardPath = GetFilePathBySuffix(argc, argv,".sboard"); //TODO: finish attaching file name not only path
 	if (boardPath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
 		return -1;
