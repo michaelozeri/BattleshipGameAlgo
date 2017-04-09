@@ -3,6 +3,7 @@
 #include "IBattleshipGameAlgo.h"
 #include "IOLib.h"
 #include "Contants.h"
+#include "GameBordUtils.h"
 
 //a logger instance to log all data. initialized at main
 extern Logger AppLogger;
@@ -22,26 +23,13 @@ public:
 	void Dispose();
 };
 
-/*
-* a utility class for performing static functions at main function
-*/
-class GameBordUtils{
-public:
-	static void InitBoard(char** board, int rows, int cols);
-	static bool IsPlayerIdChar(int playerID, char current);
-	static bool IsLegalBoradChar(char current);
-	static void LoadLineToBoard(char** board, int row, int cols, const string& cs);
-	static char** AllocateNewBoard();
-	static void DeleteBoard(char** board);
-	static BoardFileErrorCode LoadBoardFromFile(char** board, int rows, int cols, const string& filePath);
-	static void PrintBoard(ostream& stream, char** board, int rows, int cols);
-	static void CloneBoardToPlayer(const char** full_board, int playerID, char** player_board);
-};
+
 
 /*
 * a utility class for keeping track of game state
 */
-class ShipDetatilsBoard{
+class ShipDetatilsBoard
+{
 	GameBordUtils _utils;
 public:
 	int playerID;
@@ -61,22 +49,29 @@ public:
 * a class that represents a player at the game
 * holds the current information of the player while playing the game
 */
-class BattleshipGameAlgo : public IBattleshipGameAlgo {
-private:
-	int _currentscore; //my score until now
-	int _myPlayerNum;
-	bool _attacksDone;
-	GameBordUtils _utils;
-	Logger app_logger_;
-	AttackReciever _attck_receiver;
+class BattleshipGameAlgo : public IBattleshipGameAlgo 
+{
 public:
-	char** _board; //my board game
+	//constructor
 	BattleshipGameAlgo(const std::string& attackPath, const int playerNum);
+
+	//Getters
+	bool AttacksDone() const;
+	int GetSctore() const;
+
+	//IBattleshipGameAlgo	
 	void setBoard(const char** board, int numRows, int numCols) override; // called once to notify player on his board
 	std::pair<int, int> attack() override; // ask player for his move
 	void notifyOnAttackResult(int player, int row, int col, AttackResult result) override; // notify on last move result
-	bool AttacksDone() const;
-	int GetSctore() const;
+
+private:
+	int m_currentScore; //my score until now
+	int m_myPlayerNum;
+	bool m_attacksDone;
+	GameBordUtils m_utils; //TODO: static class call instead of member
+	Logger m_appLogger; //TODO: remove
+	char** m_board; //my board game
+	AttackReciever m_attackReceiver;
 };
 
 

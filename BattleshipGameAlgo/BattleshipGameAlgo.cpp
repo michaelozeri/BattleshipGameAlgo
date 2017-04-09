@@ -10,7 +10,7 @@ Logger AppLogger;
 
 
 //non - default constructor
-BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : _currentscore(0), _myPlayerNum(playerNum), _attacksDone(false), _attck_receiver(attackPath), _board(nullptr){}
+BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : m_currentScore(0), m_myPlayerNum(playerNum), m_attacksDone(false), m_attackReceiver(attackPath), m_board(nullptr){}
 
 /*
  * \brief 
@@ -18,16 +18,16 @@ BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int
  */
 std::pair<int,int> BattleshipGameAlgo::attack()
 {
-	if(_attacksDone)
+	if(m_attacksDone)
 	{
 		return{ 0,0 };
 	}
 
-	pair<int, int> attack = _attck_receiver.GetNextLegalAttack();
+	pair<int, int> attack = m_attackReceiver.GetNextLegalAttack();
 	if(attack.first == 0 && attack.second ==0)
 	{
-		_attacksDone = true;
-		_attck_receiver.Dispose();
+		m_attacksDone = true;
+		m_attackReceiver.Dispose();
 	}
 	return attack;
 }
@@ -37,8 +37,8 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) 
 {
-	_board = _utils.AllocateNewBoard();
-	_utils.CloneBoardToPlayer(board, _myPlayerNum, _board);
+	m_board = m_utils.AllocateNewBoard();
+	m_utils.CloneBoardToPlayer(board, m_myPlayerNum, m_board);
 }
 
 /*
@@ -47,31 +47,31 @@ checking of if the game is ended will be at main function
 */
 void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result) 
 {
-	if (_myPlayerNum == player )
+	if (m_myPlayerNum == player )
 	{
 		
-		_utils.PrintBoard(AppLogger.logFile, _board,ROWS, COLS);
+		m_utils.PrintBoard(AppLogger.logFile, m_board,ROWS, COLS);
 
-		char check = _board[row][col]; //TODO: mordi change check to main board instead
+		char check = m_board[row][col]; //TODO: mordi change check to main board instead
 		if(result != AttackResult::Miss)
 		{
-			_board[row][col] = '@';
+			m_board[row][col] = '@';
 		}
 		if (result == AttackResult::Sink) 
 		{
 			switch (tolower(check)) 
 			{
 			case RubberBoatB:
-				_currentscore += RubberBoatPoints;
+				m_currentScore += RubberBoatPoints;
 				break;
 			case RocketShipB:
-				_currentscore += RocketShipPoints;
+				m_currentScore += RocketShipPoints;
 				break;
 			case SubmarineB:
-				_currentscore += SubmarinePoints;
+				m_currentScore += SubmarinePoints;
 				break;
 			case DestroyerB:
-				_currentscore += DestroyerPoints;
+				m_currentScore += DestroyerPoints;
 				break;
 			default: ;
 			}
@@ -82,12 +82,12 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 //getter for if the attacks are finished
 bool BattleshipGameAlgo::AttacksDone() const
 {
-	return _attacksDone;
+	return m_attacksDone;
 }
 
 int BattleshipGameAlgo::GetSctore() const
 {
-	return _currentscore;
+	return m_currentScore;
 }
 
 AttackReciever::AttackReciever(const string& attackPath) : path(attackPath)
@@ -186,112 +186,7 @@ void AttackReciever::Dispose()
 	_file.close();
 }
 
-void GameBordUtils::InitBoard(char** board, int rows, int cols)
-	{
-		for (size_t i = 0; i < ROWS; i++)
-		{
-			for (size_t j = 0; j < COLS; j++)
-			{
-				board[i][j] = BLANK;
-			}
-		}
-	}
 
-bool GameBordUtils::IsPlayerIdChar(int playerID, char current){
-	if (playerID == PlayerAID)
-	{
-		return current == RubberBoatA ||
-			current == RocketShipA ||
-			current == SubmarineA ||
-			current == DestroyerA;
-	}
-	if (playerID == PlayerBID)
-	{
-		return  current == RubberBoatB ||
-			current == RocketShipB ||
-			current == SubmarineB ||
-			current == DestroyerB;
-	}
-	return false;
-}
-
-bool GameBordUtils::IsLegalBoradChar(char current){
-	return IsPlayerIdChar(PlayerAID, current) || IsPlayerIdChar(PlayerBID, current);
-}
-
-void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs){
-	char* currentRow = board[row];
-	unsigned long long len = cs.length() < cols ? cs.length() : cols;
-	for (size_t i = 0; i < len; i++)
-	{
-		char currentChar = cs[i];
-		currentRow[i] = IsLegalBoradChar(currentChar) ? currentChar : BLANK;
-	}
-}
-
-char** GameBordUtils::AllocateNewBoard(){
-	char** board = new char*[ROWS];
-	for (int i = 0; i < ROWS; ++i)
-		board[i] = new char[COLS];
-	return board;
-}
-
-void GameBordUtils::DeleteBoard(char** board){
-	// Delete board array
-	for (int i = 0; i < ROWS; ++i) {
-		delete[] board[i];
-	}
-	delete[] board;
-}
-
-
-BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath){
-	//set all board to blank
-	InitBoard(board, rows, cols);
-
-	FileReader fileReader(filePath);
-
-	int row = 0;
-	while (!fileReader.IsEof() || row == 10)
-	{
-		string line;
-		fileReader.ReadLine(line);
-		LoadLineToBoard(board, row, cols, line);
-		row++;
-	}
-
-	fileReader.CloseFile();
-
-	// TODO:  Validate char** board ,return BoardFileErrorCode::other error code
-	return BoardFileErrorCode::Success;
-}
-
-
-
-void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols){
-	stream << "######Game Board######" << endl;
-	for (size_t i = 0; i < rows; i++)
-	{
-		for (size_t j = 0; j < cols; j++)
-		{
-			stream << board[i][j];
-		}
-		stream << endl;
-	}
-	stream << "###End Game Board######" << endl;
-}
-
-void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board){
-	InitBoard(player_board, ROWS, COLS);
-
-	for (size_t i = 0; i < ROWS; i++)
-	{
-		for (size_t j = 0; j < COLS; j++)
-		{
-			player_board[i][j] = IsPlayerIdChar(playerID, full_board[i][j]) ? full_board[i][j] : player_board[i][j];
-		}
-	}
-}
 
 ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board){
 	for (size_t i = 0; i < ROWS; i++)
