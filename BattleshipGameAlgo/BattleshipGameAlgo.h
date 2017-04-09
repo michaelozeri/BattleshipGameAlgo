@@ -4,6 +4,9 @@
 #include "IOLib.h"
 #include "Contants.h"
 
+//a logger instance to log all data. initialized at main
+extern Logger AppLogger;
+
 
 /*
 * a utility class for handeling all attack functionalities
@@ -42,7 +45,7 @@ class ShipDetatilsBoard{
 	GameBordUtils _utils;
 public:
 	int playerID;
-	char** borad;
+	char** mainboard;
 
 	int RubberBoatCells;
 	int RocketShipCells;
@@ -63,7 +66,7 @@ private:
 	int _currentscore; //my score until now
 	int _myPlayerNum;
 	bool _attacksDone;
-	GameBordUtils utils;
+	GameBordUtils _utils;
 	Logger app_logger_;
 	AttackReciever _attck_receiver;
 public:

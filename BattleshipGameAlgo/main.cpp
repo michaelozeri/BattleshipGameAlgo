@@ -6,8 +6,6 @@
 
 using namespace std;
 
-//a logger instance to log all data. initialized at main
-Logger AppLogger;
 
 /*
  * @param argc - of main program 
@@ -29,7 +27,6 @@ string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 		while (true) {
 			getline(nondefaultstream, templine);
 			if (nondefaultstream.eof()) {
-				cout <<  filesuffix +" file was not found in non-default path given" << endl;
 				break;
 			}
 			string delimiter = ".";
@@ -40,7 +37,7 @@ string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 			filename = templine.substr(0, pos);
 			if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
 				nondefaultstream.close();
-				return nondefaultpath + filename + suffix; //TODO: persume argument is inserted with '\' at string ending
+				return nondefaultpath + filename + suffix; //TODO: assume argument is inserted with '\' at string ending
 			}
 		}
 		nondefaultstream.close();
@@ -77,7 +74,7 @@ char** ClonePlayerBoard(const char** fullBoard, int i)
 	return playerBoard;
 }
 
-void SetPlayerBoards(char** board, string path, BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
+void SetPlayerBoards(char** board, BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
 {
 	char** playerAboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
 	AppLogger.logFile << "CloneBoardForA" << endl;
@@ -149,7 +146,6 @@ int main(int argc, char* argv[])
 	}
 	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
-	string path = ""; //path to enter the non-default path to files, set to nullptr at default //TODO: is this needed? i think not. (mordi)
 	string Aattackpath, Battackpath;
 	Aattackpath = GetFilePathBySuffix(argc, argv, ".attack-a");
 	if (Aattackpath == "ERR") {
@@ -167,7 +163,7 @@ int main(int argc, char* argv[])
 	// Init players Instances
 	BattleshipGameAlgo playerA(Aattackpath, PlayerAID);
 	BattleshipGameAlgo playerB(Battackpath, PlayerBID);
-	SetPlayerBoards(maingameboard, path, playerA, playerB);
+	SetPlayerBoards(maingameboard, playerA, playerB);
 	
 	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside
 	ShipDetatilsBoard playerAboardDetails(maingameboard, PlayerAID);
@@ -178,16 +174,20 @@ int main(int argc, char* argv[])
 	//main game play
 
 	// While not both of players ended their attacks
-	while (!playerA.AttacksDone() && !playerB.AttacksDone())
+	while (!playerA.AttacksDone() || !playerB.AttacksDone())
 	{
 		pair<int, int> tempPair = GetNextPlayerAttack(playerIdToPlayNext, playerA, playerB);
-		if ((tempPair.first == -1) && (tempPair.second == -1))
+
+		//aligned both axis -1 because main board starts from (0,0)
+		tempPair = { tempPair.first - 1,tempPair.second - 1 };
+
+		if ((tempPair.first == -2) && (tempPair.second == -2))
 		{
 			//TODO: Error occured during reading from file. Dispose all and exit gracefully - use dtor using delete
 			return -1;
 		}
 
-		if ((tempPair.first == 0) && (tempPair.second == 0))
+		if ((tempPair.first == -1) && (tempPair.second == -1))
 		{
 			// Flip players
 			playerIdToPlayNext = (playerIdToPlayNext == PlayerAID) ? PlayerBID : PlayerAID;
@@ -195,12 +195,12 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			//calculate attack and update board
+			//calculate attack and update mainboard
 			AttackResult tempattackresult = GetAttackResult(tempPair, playerIdToPlayNext, playerAboardDetails, playerBboardDetails);
 			
 			//update players
-			playerA.notifyOnAttackResult(PlayerAID, tempPair.first, tempPair.second, tempattackresult);
-			playerB.notifyOnAttackResult(PlayerBID, tempPair.first, tempPair.second, tempattackresult);
+			playerA.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
+			playerB.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
 
 			if (tempattackresult == AttackResult::Miss)
 			{

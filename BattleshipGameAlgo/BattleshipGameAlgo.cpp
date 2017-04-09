@@ -5,11 +5,12 @@
 #include "BattleshipGameAlgo.h"
 #include <algorithm>
 
+//a logger instance to log all data. initialized at main
+Logger AppLogger;
+
+
 //non - default constructor
-BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : _currentscore(0), _myPlayerNum(playerNum), _attacksDone(false), _attck_receiver(attackPath), _board(nullptr)
-{
-	cout << "non - default constructor" << endl;
-}
+BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : _currentscore(0), _myPlayerNum(playerNum), _attacksDone(false), _attck_receiver(attackPath), _board(nullptr){}
 
 /*
  * \brief 
@@ -36,9 +37,8 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) 
 {
-	_board = utils.AllocateNewBoard();
-	utils.CloneBoardToPlayer(board, _myPlayerNum, _board);
-	std::cout << "finished copying array" << std::endl;
+	_board = _utils.AllocateNewBoard();
+	_utils.CloneBoardToPlayer(board, _myPlayerNum, _board);
 }
 
 /*
@@ -49,7 +49,10 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 {
 	if (_myPlayerNum == player )
 	{
-		char check = _board[row][col];
+		
+		_utils.PrintBoard(AppLogger.logFile, _board,ROWS, COLS);
+
+		char check = _board[row][col]; //TODO: mordi change check to main board instead
 		if(result != AttackResult::Miss)
 		{
 			_board[row][col] = '@';
@@ -241,6 +244,7 @@ void GameBordUtils::DeleteBoard(char** board){
 	delete[] board;
 }
 
+
 BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath){
 	//set all board to blank
 	InitBoard(board, rows, cols);
@@ -258,9 +262,11 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 	fileReader.CloseFile();
 
-	// TODO:  Validate char** board return BoardFileErrorCode::other error code
+	// TODO:  Validate char** board ,return BoardFileErrorCode::other error code
 	return BoardFileErrorCode::Success;
 }
+
+
 
 void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols){
 	stream << "######Game Board######" << endl;
@@ -287,7 +293,7 @@ void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, ch
 	}
 }
 
-ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), borad(board){
+ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board){
 	for (size_t i = 0; i < ROWS; i++)
 	{
 		for (size_t j = 0; j < COLS; j++)
@@ -324,10 +330,11 @@ ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(play
 */
 AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 {
-	char cell = borad[attack.first][attack.second];
+	char cell = mainboard[attack.first][attack.second];
 	if(_utils.IsPlayerIdChar(playerID, cell))
 	{
-		borad[attack.first][attack.second] = '@';
+		mainboard[attack.first][attack.second] = '@';
+		_utils.PrintBoard(AppLogger.logFile,mainboard,ROWS,COLS); //TODO: this was changed if there is an error (if ok then remove)
 		switch (tolower(cell))
 		{
 		case 'b':
@@ -344,7 +351,7 @@ AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 			return DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
 		default:
 			// Restore the previous value - should not get here
-			borad[attack.first][attack.second] = cell;
+			mainboard[attack.first][attack.second] = cell;
 			break;
 		}
 	}
