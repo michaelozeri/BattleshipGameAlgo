@@ -4,31 +4,15 @@
 #include "IOLib.h"
 #include "Contants.h"
 #include "GameBordUtils.h"
+#include "AttackReciever.h"
 
 //a logger instance to log all data. initialized at main
 extern Logger AppLogger;
 
-
-/*
-* a utility class for handeling all attack functionalities
-*/
-class AttackReciever{
-	string path;
-	ifstream _file;
-public:
-	AttackReciever(const string& attackPath);
-	int ReadNextAttack(std::pair<int, int>& pair);
-	pair<int, int> GetNextLegalAttack();
-	int ConvertStringToIntSafely(string& line, int& number) const;
-	void Dispose();
-};
-
-
-
 /*
 * a utility class for keeping track of game state
 */
-class ShipDetatilsBoard
+class ShipDetatilsBoard //TODO: mordi, need to remove from this header and make as a member of BattleshipGameAlgo
 {
 	GameBordUtils _utils;
 public:
@@ -65,12 +49,14 @@ public:
 	void notifyOnAttackResult(int player, int row, int col, AttackResult result) override; // notify on last move result
 
 private:
-	int m_currentScore; //my score until now
+	//my score until now
+	int m_currentScore; 
+	//My player number
 	int m_myPlayerNum;
+	//boolean value setting if i finished my attacks
 	bool m_attacksDone;
-	GameBordUtils m_utils; //TODO: static class call instead of member
-	Logger m_appLogger; //TODO: remove
-	char** m_board; //my board game
+	//my board game
+	char** m_board; 
 	AttackReciever m_attackReceiver;
 };
 

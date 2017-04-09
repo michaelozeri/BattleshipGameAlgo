@@ -1,4 +1,6 @@
 A.attack-a
+AttackReciever.cpp
+AttackReciever.h
 B.attack-b
 Battle.log
 BattleshipGameAlgo.cpp
@@ -10,6 +12,8 @@ board.sboard
 Contants.h
 file_names.txt
 file_names_working.txt
+GameBordUtils.cpp
+GameBordUtils.h
 IBattleshipGameAlgo.h
 IOLib.h
 Logger.h

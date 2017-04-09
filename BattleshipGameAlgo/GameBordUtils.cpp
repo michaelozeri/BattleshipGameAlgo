@@ -1,5 +1,69 @@
+#include "stdafx.h"
+
 #include "GameBordUtils.h"
 #include "IOLib.h"
+
+/*
+* this function checks that in the adjecant places around each ship there
+* are no other ship
+* @return - true if the board is not ok, otherwise false
+*/
+bool CheckAlahson(char** board,int i,int j,int rows,int cols) { //TODO: check for i,j in ooposite side of ending
+	if (i = 0) {
+		if (j = 0) {
+			if ((board[i + 1][j + 1] != ' ')) {
+				return true;
+			}
+		}
+		else {
+			if ((board[i + 1][j + 1] != ' ')||(board[i + 1][j - 1] != ' ')) {
+				return true;
+			}
+		}
+	}
+	else { //i != 0
+		if (j = 0) {
+			if ((board[i - 1][j + 1] != ' ')|| (board[i + 1][j + 1] != ' ')) {
+				return true;
+			}
+		}
+		else {
+			if ((board[i - 1][j + 1] != ' ') || (board[i + 1][j - 1] != ' ')|| (board[i - 1][j - 1] != ' ')|| (board[i + 1][j + 1] != ' ')) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/*
+* this function validates the game board and prints by order the errors in the game
+*/
+BoardFileErrorCode ValidateGameBoard(char** board,int rows,int cols) { //TODO: michael, finish
+	bool err1a = false;
+	bool err2a = false;
+	bool err3a = false;
+	bool err1b = false;
+	bool err2b = false;
+	bool err3b = false;
+	bool erralahson = false;
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			if (!erralahson) {
+				if (board[i][j] != ' ') {
+					erralahson = CheckAlahson(board, i, j, rows, cols);
+				}
+			}
+			
+		}
+	}
+	if (erralahson) {
+		cout << ERRALAHSON << endl;
+	}
+	return BoardFileErrorCode::Success;
+}
 
 void GameBordUtils::InitBoard(char** board, int rows, int cols)
 {
@@ -61,6 +125,8 @@ void GameBordUtils::DeleteBoard(char** board) {
 
 
 BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath) {
+
+	BoardFileErrorCode errcode;
 	//set all board to blank
 	InitBoard(board, rows, cols);
 
@@ -77,8 +143,9 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 	fileReader.CloseFile();
 
-	// TODO:  Validate char** board ,return BoardFileErrorCode::other error code
-	return BoardFileErrorCode::Success;
+	errcode = ValidateGameBoard(board,ROWS,COLS);
+
+	return errcode;
 }
 
 

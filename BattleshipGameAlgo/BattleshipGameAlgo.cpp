@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "BattleshipGameAlgo.h"
-#include <algorithm>
 
 //a logger instance to log all data. initialized at main
 Logger AppLogger;
@@ -37,8 +36,8 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) 
 {
-	m_board = m_utils.AllocateNewBoard();
-	m_utils.CloneBoardToPlayer(board, m_myPlayerNum, m_board);
+	m_board = GameBordUtils::AllocateNewBoard();
+	GameBordUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
 }
 
 /*
@@ -50,7 +49,7 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 	if (m_myPlayerNum == player )
 	{
 		
-		m_utils.PrintBoard(AppLogger.logFile, m_board,ROWS, COLS);
+		GameBordUtils::PrintBoard(AppLogger.logFile, m_board,ROWS, COLS);
 
 		char check = m_board[row][col]; //TODO: mordi change check to main board instead
 		if(result != AttackResult::Miss)
@@ -89,103 +88,6 @@ int BattleshipGameAlgo::GetSctore() const
 {
 	return m_currentScore;
 }
-
-AttackReciever::AttackReciever(const string& attackPath) : path(attackPath)
-{
-	_file.open(attackPath);
-}
-
-int AttackReciever::ReadNextAttack(std::pair<int, int>& pair)
-{
-	string line;
-
-	// Read next line
-	std::getline(_file, line);
-
-	// Error occured on reading and EOF didn't reach
-	if (!_file && !_file.eof())
-	{
-		std::cout << "Error: Read from file " << path << " failure!" << std::endl;
-		return -1;
-	}
-
-	// Remove all spaces in line
-	line.erase(remove(line.begin(), line.end(), ' '), line.end());
-	
-	// Find place of delimiter ','
-	string::size_type index = line.find(',');
-	if (index == string::npos || index == 0 || index == line.length() - 1)
-	{
-		return 1; // Attack is invalid, no delimiter or invalid delimiter place
-	}
-
-	// Get string from 0 to index (exclude)
-	string rowString = line.substr(0, index);
-	
-	//Get string from index +
-	string colString = line.substr(index + 1);
-
-	//convert attack string into int's
-	int row, col;
-	if (ConvertStringToIntSafely(rowString, row) != 0 || ConvertStringToIntSafely(colString, col) != 0)
-	{
-		//Convert failed
-		return 1;
-	}
-
-	//checking if index is ok
-	if ((row > 10) || (row < 1) || (col < 1) || (col > 10))
-	{
-		// Values are out of range
-		return 1;
-	}
-
-	pair.first = row;
-	pair.second = col;
-	return 0; 
-}
-
-pair<int, int> AttackReciever::GetNextLegalAttack()
-{
-	std::string attackRow, attackCol;
-	
-	while(!_file.eof())
-	{
-		pair<int, int> attack;
-		int result = ReadNextAttack(attack);
-		if(result == 0) // Success read attack
-		{
-			return attack;
-		}
-		if(result == 1) // Attack is Invalid
-		{continue; }
-
-		if(result == -1) // Failure during reading 
-		{
-			return{ -1, -1 };
-		}
-	}
-	return{ 0,0 };
-}
-
-int AttackReciever::ConvertStringToIntSafely(string& line, int& number) const
-{
-	try
-	{
-		number = stoi(line);
-		return 0;
-	}
-	catch (const std::exception&)
-	{
-		return -1;
-	}
-}
-
-void AttackReciever::Dispose()
-{
-	_file.close();
-}
-
 
 
 ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board){
@@ -229,7 +131,7 @@ AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 	if(_utils.IsPlayerIdChar(playerID, cell))
 	{
 		mainboard[attack.first][attack.second] = '@';
-		_utils.PrintBoard(AppLogger.logFile,mainboard,ROWS,COLS); //TODO: this was changed if there is an error (if ok then remove)
+		_utils.PrintBoard(AppLogger.logFile,mainboard,ROWS,COLS); 
 		switch (tolower(cell))
 		{
 		case 'b':
