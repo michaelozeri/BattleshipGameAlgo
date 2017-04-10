@@ -160,7 +160,7 @@ void GameBordUtils::DeleteBoard(char** board) {
 
 BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath) {
 
-	BoardFileErrorCode errcode;
+	BoardFileErrorCode errcode = BoardFileErrorCode::Success;
 	//set all board to blank
 	InitBoard(board, rows, cols);
 
@@ -177,7 +177,7 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 	fileReader.CloseFile();
 
-	errcode = ValidateGameBoard(board,ROWS,COLS);
+	//errcode = ValidateGameBoard(board,ROWS,COLS); //TODO: add this to code
 
 	return errcode;
 }

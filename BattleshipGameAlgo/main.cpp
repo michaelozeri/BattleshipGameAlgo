@@ -6,6 +6,14 @@
 
 using namespace std;
 
+//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
+char* GetWorkingDirectory(char* partialPath){
+	char full[_MAX_PATH] = "";
+	if (_fullpath(full, partialPath, _MAX_PATH) == NULL) {
+		return NULL; 
+	}
+	return full; //TODO: fix this is returning garbage
+}
 
 /*
  * @param argc - of main program 
@@ -16,8 +24,12 @@ using namespace std;
  */
 string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 {
+	char* currentdirectory = GetWorkingDirectory(".\\");
+	string filename,suffix;
+	string delimiter = ".";
 	string nondefaultpath;
 	string systemcallcommand;
+	size_t pos = 0;
 	string templine;
 	if (argc > 1) {
 		nondefaultpath = argv[1];
@@ -27,21 +39,33 @@ string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 		while (true) {
 			getline(nondefaultstream, templine);
 			if (nondefaultstream.eof()) {
+				if (filesuffix == ".sboard") {
+					cout << "Missing board file (*.sboard) looking in path: " << currentdirectory << endl;
+				}
+				else if (filesuffix == ".attack-a") {
+					cout << "Missing attack file for player A(*.attack - a) looking in path: " << currentdirectory << endl;
+				}
+				else {
+					cout << "Missing attack file for player B(*.attack - b) looking in path: " << currentdirectory << endl;
+				}
 				break;
 			}
-			string delimiter = ".";
-			size_t pos = 0;
-			string filename, suffix;
 			pos = templine.find(delimiter);
 			suffix = templine.substr(pos, templine.length());
 			filename = templine.substr(0, pos);
 			if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
 				nondefaultstream.close();
-				return nondefaultpath + filename + suffix; //TODO: assume argument is inserted with '\' at string ending
+				if (nondefaultpath.at(nondefaultpath.length() - 1) == '\\') {
+					return nondefaultpath + filename + suffix; //argument is inserted with '\' at string ending
+				}
+				else {
+					return nondefaultpath + '\\' + filename + suffix; //argument is inserted without '\' at ending
+				}
 			}
 		}
 		nondefaultstream.close();
 	}
+	pos = 0;
 	//file not found in non-default directory
 	systemcallcommand = "dir /b /a-d > file_names_working.txt";
 	system(systemcallcommand.c_str());
@@ -53,9 +77,6 @@ string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 			defaultpathstream.close();
 			return "ERR";
 		}
-		string delimiter = ".";
-		size_t pos = 0;
-		string filename, suffix;
 		pos = templine.find(delimiter);
 		suffix = templine.substr(pos, templine.length());
 		filename = templine.substr(0, pos);

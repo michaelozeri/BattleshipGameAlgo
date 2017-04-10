@@ -1,0 +1,126 @@
+
+/*
+* this function checks the ship size to the right or down as chosen
+*direction 1 = check to the right
+*direction 0 = check down
+*/
+int CheckShipSize(char** board, char direction, int size,int i,int j,char type) {
+	if (size != 0) {
+		board[i][j] = 'X';//mark that i checked this place
+		if (board[i + 1 - direction][j + direction] != type) {
+			return 0;
+		}
+		return 1 + CheckShipSize(board, direction, size - 1, (i + 1 - direction), (j + direction), type);
+	}
+	else {
+		return 0;
+	}
+}
+
+/*
+* this function checks that in the adjecant places around each ship there
+* are no other ship. it also markes not good diagonal places in 'X'
+* @ param rows, cols - size of board matrix
+* @ param i,j - specific coordinate we are checking its diagonal around chambers
+* @return - true if the board is not ok, otherwise false
+*/
+bool CheckAlahson(char** board,int i,int j,int rows,int cols) { //TODO: check for i,j in ooposite side of ending
+	bool check = false;
+	//check lower left
+	if ((i != rows - 1) && (j != 0)) {
+		if (board[i-1][j-1] != BLANK1) {
+			//board[i - 1][j - 1] = 'X'; //mark as checked
+			check = true;
+		}
+	}
+	//check lower right
+	if ((i != rows - 1) && (j != cols - 1)) {
+		if (board[i-1][j+1] != BLANK1) {
+			//board[i - 1][j + 1] = 'X';
+			check = true;
+		}
+	}
+	//check upper left
+	if ((i != 0) && (j != 0)) {
+		if (board[i-1][j-1] != BLANK1) {
+			//board[i - 1][j - 1] = 'X';
+			check = true;
+		}
+	}
+	//check upper right
+	if ((i != 0) && (j != cols - 1)) {
+		if (board[i-1][j+1] != BLANK1) {
+			//board[i - 1][j + 1] = 'X';
+			check = true;
+		}
+	}
+	return check;
+}
+
+/*
+* this function validates the game board and prints by order the errors in the game
+*/
+BoardFileErrorCode ValidateGameBoard(char** board,int rows,int cols) { //TODO: michael, finish
+	int tempchecksize;
+	bool checkright, checkdown;
+	bool err1a = false;
+	bool err2a = false;
+	bool err1b = false;
+	bool err2b = false;
+	bool shape1B = false;
+	bool shape1P = false;
+	bool shape1M = false;
+	bool shape1D = false;
+	bool shape1b = false;
+	bool shape1p = false;
+	bool shape1m = false;
+	bool shape1d = false;
+	bool erralahson = false;
+	//checking size of ships
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			switch (board[i][j]) {
+			case 'B':
+			case 'b':
+				tempchecksize = 1;
+				break;
+			case 'P':
+			case 'p':
+				tempchecksize = 2;
+				break;
+			case 'M':
+			case 'm':
+				tempchecksize = 3;
+				break;
+			case 'D':
+			case 'd':
+				tempchecksize = 4;
+				break;
+			}
+			checkright = (CheckShipSize(board, 1, tempchecksize, i, j, board[i][j]) == tempchecksize);
+			checkdown = (CheckShipSize(board, 0, tempchecksize, i, j, board[i][j]) == tempchecksize);
+			if (!(checkright^checkdown)) { //xor because we want only one of them to be ok
+
+			}
+		}
+	}
+	//checking diagonal if there are adjecant ships
+	for (int i = 0; i < rows; i++){
+		for (int j = 0; j < cols; j++){
+			//checking adjecant ships
+			if (board[i][j] != BLANK1) {
+				if (!erralahson) {
+					erralahson = CheckAlahson(board, i, j, rows, cols);
+				}
+				else {
+					CheckAlahson(board, i, j, rows, cols);
+				}
+			}
+		}
+	}
+	
+	if (erralahson) {
+		cout << ERRALAHSON << endl;
+	}
+	return BoardFileErrorCode::Success;
+}
