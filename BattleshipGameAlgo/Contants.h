@@ -2,14 +2,13 @@
 
 #define ERR1A "Too many ships for player A"
 #define ERR2A "Too few ships for player A"
-#define ERR3A "Wrong size or shape for ship <char> for player A" //TODO: change <char>
 #define ERR1B "Too many ships for player B"
 #define ERR2B "Too few ships for player B"
-#define ERR3B "Wrong size or shape for ship <char> for player B" //TODO: change <char>
 #define ERRALAHSON "Adjacent Ships on Board"
 #define ROWS 10
 #define COLS 10
 #define BLANK '*'
+
 
 enum class BoardFileErrorCode {Success, UnknownError};
 

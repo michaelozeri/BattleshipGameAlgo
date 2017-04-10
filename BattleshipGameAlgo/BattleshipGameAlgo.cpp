@@ -48,7 +48,6 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 {
 	if (m_myPlayerNum == player )
 	{
-		
 		GameBordUtils::PrintBoard(AppLogger.logFile, m_board,ROWS, COLS);
 
 		char check = m_board[row][col]; //TODO: mordi change check to main board instead

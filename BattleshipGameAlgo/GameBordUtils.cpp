@@ -4,61 +4,95 @@
 #include "IOLib.h"
 
 /*
-* this function checks that in the adjecant places around each ship there
-* are no other ship
-* @return - true if the board is not ok, otherwise false
+* this function checks the ship size to the right or down as chosen
+*direction 1 = check to the right
+*direction 0 = check down
 */
-bool CheckAlahson(char** board,int i,int j,int rows,int cols) { //TODO: check for i,j in ooposite side of ending
-	if (i = 0) {
-		if (j = 0) {
-			if ((board[i + 1][j + 1] != ' ')) {
-				return true;
-			}
+bool CheckShipSize(char** board, char direction, int i, int j, char type) {
+	int sizecheck;
+	switch (type) {
+	case 'B':
+	case 'b':
+		sizecheck = 0;
+		break;
+	case 'P':
+	case 'p':
+		sizecheck = 1;
+		break;
+	case 'M':
+	case 'm':
+		sizecheck = 2;
+		break;
+	case 'D':
+	case 'd':
+		sizecheck = 3;
+		break;
+	}
+	if (direction) { //if checking to the right
+		if (sizecheck + j > COLS - 1) {
+			board[i][j] = 'X'; //not enough space for ship
+			return false;
 		}
 		else {
-			if ((board[i + 1][j + 1] != ' ')||(board[i + 1][j - 1] != ' ')) {
-				return true;
+			for (size_t k = j; k < j+sizecheck; k++){
+				if (board[i][k] != type) {
+					return false;
+				}
+				board[i][k] = 'X'; //mark as passed over
 			}
 		}
 	}
-	else { //i != 0
-		if (j = 0) {
-			if ((board[i - 1][j + 1] != ' ')|| (board[i + 1][j + 1] != ' ')) {
-				return true;
-			}
+	else {//direction of check is down
+		if (sizecheck + i > ROWS - 1) {
+			board[i][j] = 'X'; //not enough space for ship at all
+			return false;
 		}
 		else {
-			if ((board[i - 1][j + 1] != ' ') || (board[i + 1][j - 1] != ' ')|| (board[i - 1][j - 1] != ' ')|| (board[i + 1][j + 1] != ' ')) {
-				return true;
+			for (size_t k = i; k < i + sizecheck; k++) {
+				if (board[k][j] != type) {
+					return false;
+				}
+				board[k][j] = 'X'; //mark as passed over
 			}
 		}
 	}
-	return false;
+	return true; //all is ok with the ship size
 }
 
 /*
 * this function validates the game board and prints by order the errors in the game
 */
-BoardFileErrorCode ValidateGameBoard(char** board,int rows,int cols) { //TODO: michael, finish
+BoardFileErrorCode ValidateGameBoard(char** board, int rows, int cols) { //TODO: mordi, finish
+	int tempchecksize = 0;
+	bool checkright, checkdown;
+	//bitwise or these values to not go from true -> false
 	bool err1a = false;
 	bool err2a = false;
-	bool err3a = false;
 	bool err1b = false;
 	bool err2b = false;
-	bool err3b = false;
+	bool shape1B = false;
+	bool shape1P = false;
+	bool shape1M = false;
+	bool shape1D = false;
+	bool shape1b = false;
+	bool shape1p = false;
+	bool shape1m = false;
+	bool shape1d = false;
 	bool erralahson = false;
-	for (int i = 0; i < rows; i++)
-	{
-		for (int j = 0; j < cols; j++)
-		{
-			if (!erralahson) {
-				if (board[i][j] != ' ') {
-					erralahson = CheckAlahson(board, i, j, rows, cols);
+	//checking size of ships
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (board[i][j] != 'X') { //if i didnt check that place already
+				//TODO: inside checkshipsize check that the size is not bigger then it should be.
+				checkright = CheckShipSize(board, 1, i, j, board[i][j]);//check size to the right
+				checkdown = CheckShipSize(board, 0, i, j, board[i][j]);;
+				if (!(checkright^checkdown)) { //xor because we want only one of them to be ok
+
 				}
 			}
-			
 		}
 	}
+	
 	if (erralahson) {
 		cout << ERRALAHSON << endl;
 	}
