@@ -1,13 +1,16 @@
 #pragma once
 
-#define ERR1A "Too many ships for player A"
-#define ERR2A "Too few ships for player A"
-#define ERR1B "Too many ships for player B"
-#define ERR2B "Too few ships for player B"
-#define ERRALAHSON "Adjacent Ships on Board"
+#define TooManyShipsA "Too many ships for player A"
+#define TooFewShipsA "Too few ships for player A"
+#define TooManyShipsB "Too many ships for player B"
+#define TooFewShipsB "Too few ships for player B"
+#define AdjacentERR "Adjacent Ships on Board"
+
 #define ROWS 10
 #define COLS 10
 #define BLANK '*'
+
+#define LEGAL_NUMBER_OF_SHIPS_PER_PLAYER 5
 
 
 enum class BoardFileErrorCode {Success, UnknownError};
@@ -37,3 +40,4 @@ enum class BoardFileErrorCode {Success, UnknownError};
 #define RocketShipPoints 3
 #define SubmarinePoints 7
 #define DestroyerPoints 8
+

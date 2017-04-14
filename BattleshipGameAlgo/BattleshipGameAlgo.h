@@ -24,6 +24,7 @@ public:
 	int SubmarineCells;
 	int DestroyeCells;
 
+	int negativeScore; // Save the score of the other player
 	ShipDetatilsBoard(char** board, int playerID);
 	AttackResult GetAttackResult(pair<int, int> attack);
 	bool IsLoose() const;
@@ -41,23 +42,20 @@ public:
 
 	//Getters
 	bool AttacksDone() const;
-	int GetSctore() const;
 
 	//IBattleshipGameAlgo	
 	void setBoard(const char** board, int numRows, int numCols) override; // called once to notify player on his board
 	std::pair<int, int> attack() override; // ask player for his move
 	void notifyOnAttackResult(int player, int row, int col, AttackResult result) override; // notify on last move result
-
+	~BattleshipGameAlgo();
 private:
-	//my score until now
-	int m_currentScore; 
 	//My player number
 	int m_myPlayerNum;
 	//boolean value setting if i finished my attacks
 	bool m_attacksDone;
 	//my board game
 	char** m_board; 
-	AttackReciever m_attackReceiver;
+	AttackReciever* m_attackReceiver;
 };
 
 

@@ -18,4 +18,5 @@ public:
 	pair<int, int> GetNextLegalAttack();
 	int ConvertStringToIntSafely(string& line, int& number) const;
 	void Dispose();
+	~AttackReciever();
 };

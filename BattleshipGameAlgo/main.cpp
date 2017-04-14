@@ -12,7 +12,7 @@ char* GetWorkingDirectory(char* partialPath){
 	if (_fullpath(full, partialPath, _MAX_PATH) == NULL) {
 		return NULL; 
 	}
-	return full; //TODO: fix this is returning garbage
+	return full; //TODO: fix this is returning garbage - OR
 }
 
 /*
@@ -131,21 +131,21 @@ pair<int, int> GetNextPlayerAttack(int player_id,  BattleshipGameAlgo& player_a,
 	return{ -1,-1 };
 }
 
-AttackResult GetAttackResult(const pair<int, int>& pair, int current_player, ShipDetatilsBoard& detailsA, ShipDetatilsBoard& detailsB)
+AttackResult GetAttackResult(const pair<int, int>& pair, char** board, ShipDetatilsBoard* detailsA, ShipDetatilsBoard* detailsB)
 {
-	return (current_player == PlayerAID) ? detailsB.GetAttackResult(pair) : detailsA.GetAttackResult(pair);
+	return GameBordUtils::IsPlayerIdChar(PlayerAID,board[pair.first][pair.second]) ? detailsA->GetAttackResult(pair) : detailsB->GetAttackResult(pair);
 }
 
-bool IsPlayerWon(int currentPlayer, ShipDetatilsBoard& detailsA, ShipDetatilsBoard& detailsB)
+bool IsPlayerWon(int currentPlayer, ShipDetatilsBoard* detailsA, ShipDetatilsBoard* detailsB)
 {
-	return currentPlayer == PlayerAID ? detailsB.IsLoose() : detailsA.IsLoose();
+	return currentPlayer == PlayerAID ? detailsB->IsLoose() : detailsA->IsLoose();
 }
 
-void PrintPoints(BattleshipGameAlgo& playerA, BattleshipGameAlgo& playerB)
+void PrintPoints(ShipDetatilsBoard* playerA, ShipDetatilsBoard* playerB)
 {
 	cout << "Points:" << endl;
-	cout << "Player A: " << playerA.GetSctore() << endl;
-	cout << "Player B: " << playerB.GetSctore() << endl;
+	cout << "Player A: " << playerB->negativeScore << endl;
+	cout << "Player B: " << playerA->negativeScore << endl;
 }
 
 int main(int argc, char* argv[]) 
@@ -155,6 +155,7 @@ int main(int argc, char* argv[])
 	string mainboardpath = GetFilePathBySuffix(argc, argv,".sboard"); 
 	if (mainboardpath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
+		AppLogger.LoggerDispose();
 		return -1;
 	}
 
@@ -163,21 +164,27 @@ int main(int argc, char* argv[])
 	
 	if(GameBordUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, mainboardpath)!= BoardFileErrorCode::Success)
 	{
+		GameBordUtils::DeleteBoard(maingameboard);
+		AppLogger.LoggerDispose();
 		return -1;
 	}
 	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
 	string Aattackpath, Battackpath;
 	Aattackpath = GetFilePathBySuffix(argc, argv, ".attack-a");
-	if (Aattackpath == "ERR") {
+	if (Aattackpath == "ERR") 
+	{
 		cout << "ERROR in retrieving attack file of player A" << endl;
-		//TODO: release all data
+		GameBordUtils::DeleteBoard(maingameboard);
+		AppLogger.LoggerDispose();
 		return -1;
 	}
 	Battackpath = GetFilePathBySuffix(argc, argv, ".attack-b");
-	if (Battackpath == "ERR") {
+	if (Battackpath == "ERR") 
+	{
 		cout << "ERROR in retrieving attack file of player B" << endl;
-		//TODO: release all data
+		GameBordUtils::DeleteBoard(maingameboard);
+		AppLogger.LoggerDispose();
 		return -1;
 	}
 
@@ -187,8 +194,8 @@ int main(int argc, char* argv[])
 	SetPlayerBoards(maingameboard, playerA, playerB);
 	
 	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside
-	ShipDetatilsBoard playerAboardDetails(maingameboard, PlayerAID);
-	ShipDetatilsBoard playerBboardDetails(maingameboard, PlayerBID);
+	ShipDetatilsBoard* playerAboardDetails = new ShipDetatilsBoard(maingameboard, PlayerAID);
+	ShipDetatilsBoard* playerBboardDetails = new ShipDetatilsBoard(maingameboard, PlayerBID);
 
 	int playerIdToPlayNext = PlayerAID;
 
@@ -204,7 +211,10 @@ int main(int argc, char* argv[])
 
 		if ((tempPair.first == -2) && (tempPair.second == -2))
 		{
-			//TODO: Error occured during reading from file. Dispose all and exit gracefully - use dtor using delete
+			GameBordUtils::DeleteBoard(maingameboard);
+			delete playerAboardDetails;
+			delete playerBboardDetails;
+			AppLogger.LoggerDispose();
 			return -1;
 		}
 
@@ -216,38 +226,52 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
+			char attckCell = maingameboard[tempPair.first][tempPair.second];
+			bool isSelfAttack = GameBordUtils::IsPlayerIdChar(playerIdToPlayNext, attckCell);
+
 			//calculate attack and update mainboard
-			AttackResult tempattackresult = GetAttackResult(tempPair, playerIdToPlayNext, playerAboardDetails, playerBboardDetails);
-			
+			AttackResult tempattackresult = GetAttackResult(tempPair, maingameboard, playerAboardDetails, playerBboardDetails);
+
 			//update players
 			playerA.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
 			playerB.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
 
-			if (tempattackresult == AttackResult::Miss)
+			if (tempattackresult == AttackResult::Miss || isSelfAttack)
 			{
 				// Flip Players
 				playerIdToPlayNext = (playerIdToPlayNext == PlayerAID) ? PlayerBID : PlayerAID;
 			}
-			else
+
+			if (IsPlayerWon(PlayerAID, playerAboardDetails, playerBboardDetails))
 			{
-				if(IsPlayerWon(playerIdToPlayNext,playerAboardDetails, playerBboardDetails))
-				{
-					char wonChar = (playerIdToPlayNext == PlayerAID) ? 'A' : 'B';
-					cout << "Player " << wonChar << " won" << endl;
-					PrintPoints(playerA, playerB);
-					 
-					// TODO - Dispose all resources
-					return 0;
-				}
+				char wonChar = 'A';
+				cout << "Player " << wonChar << " won" << endl;
+				PrintPoints(playerAboardDetails, playerBboardDetails);
+
+				GameBordUtils::DeleteBoard(maingameboard);
+				delete playerAboardDetails;
+				delete playerBboardDetails;
+				return 0;
+			}
+			if (IsPlayerWon(PlayerBID, playerAboardDetails, playerBboardDetails))
+			{
+				char wonChar = 'B';
+				cout << "Player " << wonChar << " won" << endl;
+				PrintPoints(playerAboardDetails, playerBboardDetails);
+
+				GameBordUtils::DeleteBoard(maingameboard);
+				delete playerAboardDetails;
+				delete playerBboardDetails;
+				return 0;
 			}
 		}
 	}
 
-	// TODO - Dispose all resources
-	PrintPoints(playerA, playerB);
+	PrintPoints(playerAboardDetails, playerBboardDetails);
 
-	//TODO - delete mainboard, dtor for shipdetails & gameutils?
 	GameBordUtils::DeleteBoard(maingameboard);
+	delete playerAboardDetails;
+	delete playerBboardDetails;	
 	AppLogger.LoggerDispose();
 	return 0;
 }

@@ -4,9 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <algorithm> //TODO: not allowed to use this kind of library (not allowed things not in class)
-
-
+#include <algorithm>
 
 using namespace std;
 
@@ -106,4 +104,12 @@ int AttackReciever::ConvertStringToIntSafely(string& line, int& number) const
 void AttackReciever::Dispose()
 {
 	_file.close();
+}
+
+AttackReciever::~AttackReciever()
+{
+	if(_file.is_open())
+	{
+		Dispose();
+	}
 }

@@ -9,7 +9,10 @@ Logger AppLogger;
 
 
 //non - default constructor
-BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : m_currentScore(0), m_myPlayerNum(playerNum), m_attacksDone(false), m_attackReceiver(attackPath), m_board(nullptr){}
+BattleshipGameAlgo::BattleshipGameAlgo(const std::string & attackPath, const int playerNum) : m_myPlayerNum(playerNum), m_attacksDone(false), m_board(nullptr)
+{
+	m_attackReceiver = new AttackReciever(attackPath);
+}
 
 /*
  * \brief 
@@ -22,11 +25,11 @@ std::pair<int,int> BattleshipGameAlgo::attack()
 		return{ 0,0 };
 	}
 
-	pair<int, int> attack = m_attackReceiver.GetNextLegalAttack();
+	pair<int, int> attack = m_attackReceiver->GetNextLegalAttack();
 	if(attack.first == 0 && attack.second ==0)
 	{
 		m_attacksDone = true;
-		m_attackReceiver.Dispose();
+		m_attackReceiver->Dispose();
 	}
 	return attack;
 }
@@ -46,35 +49,12 @@ checking of if the game is ended will be at main function
 */
 void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result) 
 {
-	if (m_myPlayerNum == player )
-	{
-		GameBordUtils::PrintBoard(AppLogger.logFile, m_board,ROWS, COLS);
+}
 
-		char check = m_board[row][col]; //TODO: mordi change check to main board instead
-		if(result != AttackResult::Miss)
-		{
-			m_board[row][col] = '@';
-		}
-		if (result == AttackResult::Sink) 
-		{
-			switch (tolower(check)) 
-			{
-			case RubberBoatB:
-				m_currentScore += RubberBoatPoints;
-				break;
-			case RocketShipB:
-				m_currentScore += RocketShipPoints;
-				break;
-			case SubmarineB:
-				m_currentScore += SubmarinePoints;
-				break;
-			case DestroyerB:
-				m_currentScore += DestroyerPoints;
-				break;
-			default: ;
-			}
-		}
-	}
+BattleshipGameAlgo::~BattleshipGameAlgo()
+{
+	GameBordUtils::DeleteBoard(m_board);
+	delete m_attackReceiver;
 }
 
 //getter for if the attacks are finished
@@ -83,19 +63,15 @@ bool BattleshipGameAlgo::AttacksDone() const
 	return m_attacksDone;
 }
 
-int BattleshipGameAlgo::GetSctore() const
+
+ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board), RubberBoatCells(0), RocketShipCells(0), SubmarineCells(0), DestroyeCells(0), negativeScore(0)
 {
-	return m_currentScore;
-}
-
-
-ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board){
 	for (size_t i = 0; i < ROWS; i++)
 	{
 		for (size_t j = 0; j < COLS; j++)
 		{
 			char cell = board[i][j];
-			if(_utils.IsPlayerIdChar(playerID,cell))
+			if (_utils.IsPlayerIdChar(playerID, cell))
 			{
 				switch (tolower(cell))
 				{
@@ -129,22 +105,31 @@ AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 	char cell = mainboard[attack.first][attack.second];
 	if(_utils.IsPlayerIdChar(playerID, cell))
 	{
+		AttackResult result;
 		mainboard[attack.first][attack.second] = '@';
 		_utils.PrintBoard(AppLogger.logFile,mainboard,ROWS,COLS); 
 		switch (tolower(cell))
 		{
 		case 'b':
 			RubberBoatCells--;
-			return RubberBoatCells % RubberBoatW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			result =  RubberBoatCells % RubberBoatW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			negativeScore += result == AttackResult::Sink ? RubberBoatPoints : 0;
+			return result;
 		case 'p':
 			RocketShipCells--;
-			return RocketShipCells % RocketShipW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			result =  RocketShipCells % RocketShipW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			negativeScore += result == AttackResult::Sink ? RocketShipPoints : 0;
+			return result;
 		case 'm':
 			SubmarineCells--;
-			return SubmarineCells % SubmarineW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			result = SubmarineCells % SubmarineW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			negativeScore += result == AttackResult::Sink ? SubmarinePoints : 0;
+			return result;
 		case 'd':
 			DestroyeCells--;
-			return DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			result = DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
+			negativeScore += result == AttackResult::Sink ? DestroyerPoints : 0;
+			return result;
 		default:
 			// Restore the previous value - should not get here
 			mainboard[attack.first][attack.second] = cell;

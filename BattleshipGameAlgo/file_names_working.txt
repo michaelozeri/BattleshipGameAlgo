@@ -1,0 +1,24 @@
+A.attack-a
+AttackReciever.cpp
+AttackReciever.h
+B.attack-b
+bad_board_2.sboard
+Battle.log
+BattleshipGameAlgo.cpp
+BattleshipGameAlgo.h
+BattleshipGameAlgo.vcxproj
+BattleshipGameAlgo.vcxproj.filters
+BattleshipGameAlgo.vcxproj.user
+Capture.PNG
+Contants.h
+file_names_working.txt
+functions shit for validate board.txt
+GameBordUtils.cpp
+GameBordUtils.h
+IBattleshipGameAlgo.h
+IOLib.h
+Logger.h
+main.cpp
+stdafx.cpp
+stdafx.h
+targetver.h
