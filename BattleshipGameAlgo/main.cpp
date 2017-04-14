@@ -192,6 +192,7 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 
 int main(int argc, char* argv[]) 
 {
+	//TODO: OR - remove stdafx.cpp and all refernce to it
 	//TODO: Fix all warning compiled by Release X64
 	//TODO: Check if we need to print something else to the console
 	InitLogger();
