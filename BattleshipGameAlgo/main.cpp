@@ -3,6 +3,9 @@
 #include "BattleshipGameAlgo.h"
 #include "IOLib.h"
 #include <algorithm>
+#include <windows.h>
+#include <thread>
+#include "Bonus.h"
 
 using namespace std;
 
@@ -10,7 +13,7 @@ using namespace std;
 char* GetWorkingDirectory(char* partialPath){
 	char full[_MAX_PATH] = "";
 	if (_fullpath(full, partialPath, _MAX_PATH) == NULL) {
-		return NULL; 
+		return NULL; //TODO OR replace to nullptr
 	}
 	return full; //TODO: fix this is returning garbage - OR
 }
@@ -104,7 +107,6 @@ void SetPlayerBoards(char** board, BattleshipGameAlgo& playerA, BattleshipGameAl
 	char** playerBboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
 	AppLogger.logFile << "CloneBoardForB" << endl;
 	GameBordUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
-
 	playerA.setBoard(const_cast<const char**>(playerAboard), ROWS, COLS);
 	playerB.setBoard(const_cast<const char**>(playerBboard), ROWS, COLS);
 
@@ -148,9 +150,54 @@ void PrintPoints(ShipDetatilsBoard* playerA, ShipDetatilsBoard* playerB)
 	cout << "Player B: " << playerA->negativeScore << endl;
 }
 
+void ChangeFontSize()
+{
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_FONT_INFOEX orig = { sizeof(orig) };
+
+	if (GetCurrentConsoleFontEx(hStdout, FALSE, &orig))
+		AppLogger.logFile << "Got\n";
+	else
+		AppLogger.logFile << GetLastError();
+	
+	orig.dwFontSize.X = 12;
+	orig.dwFontSize.Y = 16;
+
+	if (SetCurrentConsoleFontEx(hStdout, FALSE, &orig))
+		AppLogger.logFile << "Set\n";
+	else
+		AppLogger.logFile << endl << GetLastError();
+
+}
+
+void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
+{
+	if (i < 0 || i >= ROWS || j < 0 || j >= COLS) // Stop recursion condition
+	{
+		return;
+	}
+
+	char currentCell = maingameboard[i][j];
+	if (currentCell != HIT_CHAR)
+		return;
+
+	maingameboard[i][j] = SINK_CHAR;
+	b->PrintPlayerChar(maingameboard[i][j], j, i, player);
+	PrintSinkCharRec(maingameboard,b, i, j - 1, player);
+	PrintSinkCharRec(maingameboard,b, i, j + 1, player);
+	PrintSinkCharRec(maingameboard,b, i - 1, j, player);
+	PrintSinkCharRec(maingameboard,b, i + 1, j, player);
+}
+
 int main(int argc, char* argv[]) 
 {
+	//TODO: Fix all warning compiled by Release X64
+	//TODO: Check if we need to print something else to the console
 	InitLogger();
+                   
+	ChangeFontSize();
+	BonusParams p; //TODO OR- Init this struct with parameters from command line. defaults set
 
 	string mainboardpath = GetFilePathBySuffix(argc, argv,".sboard"); 
 	if (mainboardpath == "ERR") {
@@ -193,12 +240,14 @@ int main(int argc, char* argv[])
 	BattleshipGameAlgo playerB(Battackpath, PlayerBID);
 	SetPlayerBoards(maingameboard, playerA, playerB);
 	
-	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside
+	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside - (In next HW Next)
 	ShipDetatilsBoard* playerAboardDetails = new ShipDetatilsBoard(maingameboard, PlayerAID);
 	ShipDetatilsBoard* playerBboardDetails = new ShipDetatilsBoard(maingameboard, PlayerBID);
 
 	int playerIdToPlayNext = PlayerAID;
 
+	Bonus* bonus = new Bonus(!p.isQuiet, p.delayInMiliseconds);
+	bonus->Init(maingameboard, ROWS, COLS);
 	//main game play
 
 	// While not both of players ended their attacks
@@ -236,6 +285,27 @@ int main(int argc, char* argv[])
 			playerA.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
 			playerB.notifyOnAttackResult(playerIdToPlayNext, tempPair.first, tempPair.second, tempattackresult);
 
+			if (tempattackresult != AttackResult::Miss)
+			{
+				int playerTosetColor;
+				if(isSelfAttack)
+				{
+					playerTosetColor = playerIdToPlayNext;
+				}
+				else
+				{
+					playerTosetColor = (playerIdToPlayNext == PlayerAID) ? PlayerBID : PlayerAID;
+				}
+
+				if(tempattackresult == AttackResult::Sink)
+				{
+					// In case sink update all the cell to SINK_CHAR
+					PrintSinkCharRec(maingameboard,bonus, tempPair.first, tempPair.second, playerTosetColor);
+				}
+				else // In case hit update only the target cell
+					bonus->PrintPlayerChar(maingameboard[tempPair.first][tempPair.second], tempPair.second, tempPair.first, playerTosetColor);
+			}
+
 			if (tempattackresult == AttackResult::Miss || isSelfAttack)
 			{
 				// Flip Players
@@ -245,6 +315,7 @@ int main(int argc, char* argv[])
 			if (IsPlayerWon(PlayerAID, playerAboardDetails, playerBboardDetails))
 			{
 				char wonChar = 'A';
+				delete bonus;
 				cout << "Player " << wonChar << " won" << endl;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
@@ -257,6 +328,7 @@ int main(int argc, char* argv[])
 			{
 				char wonChar = 'B';
 				cout << "Player " << wonChar << " won" << endl;
+				delete bonus;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
 				GameBordUtils::DeleteBoard(maingameboard);
@@ -267,6 +339,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	delete bonus;
 	PrintPoints(playerAboardDetails, playerBboardDetails);
 
 	GameBordUtils::DeleteBoard(maingameboard);

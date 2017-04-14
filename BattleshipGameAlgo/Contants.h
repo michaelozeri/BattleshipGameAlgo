@@ -9,6 +9,8 @@
 #define ROWS 10
 #define COLS 10
 #define BLANK '*'
+#define HIT_CHAR '#'
+#define SINK_CHAR '@'
 
 #define LEGAL_NUMBER_OF_SHIPS_PER_PLAYER 5
 

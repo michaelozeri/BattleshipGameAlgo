@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="AttackReciever.h" />
     <ClInclude Include="BattleshipGameAlgo.h" />
+    <ClInclude Include="Bonus.h" />
     <ClInclude Include="Contants.h" />
     <ClInclude Include="GameBordUtils.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="AttackReciever.cpp" />
     <ClCompile Include="BattleshipGameAlgo.cpp" />
+    <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="GameBordUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -72,7 +72,7 @@ bool CheckShipSize(char** board, char direction, int i, int j, char type)
 	
 	if (direction) //if checking to the right
 	{
-		int a = j;
+		size_t a = j;
 		for (size_t k = j; k <= std::fmin(j + sizecheck, COLS - 1); k++)
 		{
 			if (board[i][k] != type) // Check if next cell in right is ok - should be ok for all loop
@@ -95,7 +95,7 @@ bool CheckShipSize(char** board, char direction, int i, int j, char type)
 	}
 	else //direction of check is down
 	{
-		int a = i;
+		size_t a = i;
 		for (size_t k = i; k <= fmin(i + sizecheck, ROWS - 1); k++)
 		{
 			if (board[k][j] != type)// Check if next cell down is ok - should be ok for all loop
@@ -288,6 +288,18 @@ bool GameBordUtils::IsPlayerIdChar(int playerID, char current) {
 	return false;
 }
 
+int GameBordUtils::GetCharPlayerId(char current)
+{
+	if (IsPlayerIdChar(PlayerAID, current))
+	{
+		return PlayerAID;
+	}
+	else if (IsPlayerIdChar(PlayerBID, current) )
+		return PlayerBID;
+
+	return 2;
+}
+
 bool GameBordUtils::IsLegalBoradChar(char current) {
 	return IsPlayerIdChar(PlayerAID, current) || IsPlayerIdChar(PlayerBID, current);
 }
@@ -350,8 +362,8 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 
 
-void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) {
-	stream << "######Game Board######" << endl;
+void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) 
+{
 	for (size_t i = 0; i < rows; i++)
 	{
 		for (size_t j = 0; j < cols; j++)
@@ -360,7 +372,6 @@ void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols
 		}
 		stream << endl;
 	}
-	stream << "###End Game Board######" << endl;
 }
 
 void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board) {

@@ -102,41 +102,41 @@ ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(play
 */
 AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 {
+	AttackResult result = AttackResult::Miss;
 	char cell = mainboard[attack.first][attack.second];
 	if(_utils.IsPlayerIdChar(playerID, cell))
 	{
-		AttackResult result;
-		mainboard[attack.first][attack.second] = '@';
-		_utils.PrintBoard(AppLogger.logFile,mainboard,ROWS,COLS); 
+		mainboard[attack.first][attack.second] = HIT_CHAR;
+		_utils.PrintBoard(AppLogger.logFile, mainboard, ROWS, COLS);
 		switch (tolower(cell))
 		{
 		case 'b':
 			RubberBoatCells--;
 			result =  RubberBoatCells % RubberBoatW == 0 ? AttackResult::Sink : AttackResult::Hit;
 			negativeScore += result == AttackResult::Sink ? RubberBoatPoints : 0;
-			return result;
+			break;
 		case 'p':
 			RocketShipCells--;
 			result =  RocketShipCells % RocketShipW == 0 ? AttackResult::Sink : AttackResult::Hit;
 			negativeScore += result == AttackResult::Sink ? RocketShipPoints : 0;
-			return result;
+			break;
 		case 'm':
 			SubmarineCells--;
 			result = SubmarineCells % SubmarineW == 0 ? AttackResult::Sink : AttackResult::Hit;
 			negativeScore += result == AttackResult::Sink ? SubmarinePoints : 0;
-			return result;
+			break;
 		case 'd':
 			DestroyeCells--;
 			result = DestroyeCells % DestroyerW == 0 ? AttackResult::Sink : AttackResult::Hit;
 			negativeScore += result == AttackResult::Sink ? DestroyerPoints : 0;
-			return result;
+			break;
 		default:
 			// Restore the previous value - should not get here
 			mainboard[attack.first][attack.second] = cell;
 			break;
 		}
 	}
-	return AttackResult::Miss;
+	return result;
 }
 
 bool ShipDetatilsBoard::IsLoose() const

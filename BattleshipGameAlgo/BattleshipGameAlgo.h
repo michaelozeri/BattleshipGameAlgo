@@ -2,7 +2,6 @@
 
 #include "IBattleshipGameAlgo.h"
 #include "IOLib.h"
-#include "Contants.h"
 #include "GameBordUtils.h"
 #include "AttackReciever.h"
 
@@ -26,6 +25,7 @@ public:
 
 	int negativeScore; // Save the score of the other player
 	ShipDetatilsBoard(char** board, int playerID);
+	void SetSinkCharRec(int first, int second) const;
 	AttackResult GetAttackResult(pair<int, int> attack);
 	bool IsLoose() const;
 };
@@ -57,6 +57,3 @@ private:
 	char** m_board; 
 	AttackReciever* m_attackReceiver;
 };
-
-
-

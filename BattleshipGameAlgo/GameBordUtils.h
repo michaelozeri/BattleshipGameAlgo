@@ -14,6 +14,7 @@ private:
 public:
 	static void InitBoard(char** board, int rows, int cols);
 	static bool IsPlayerIdChar(int playerID, char current);
+	static int GetCharPlayerId(char current);
 	static bool IsLegalBoradChar(char current);
 	static void LoadLineToBoard(char** board, int row, int cols, const string& cs);
 	static char** AllocateNewBoard();
