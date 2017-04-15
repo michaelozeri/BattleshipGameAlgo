@@ -203,7 +203,15 @@ int main(int argc, char* argv[])
 	InitLogger();
                    
 	ChangeFontSize();
-	BonusParams p; //TODO OR- Init this struct with parameters from command line. defaults set
+	BonusParams p; 
+
+	if (argc > 2){
+		string s1 = argv[1];
+		string s2 = argv[2];
+		if ((!s1.compare("-quiet")) || (!s2.compare("-quiet"))) {
+			p.isQuiet = true;
+		}
+	}
 
 	//check existance of directory
 	if (argc > 1) {
