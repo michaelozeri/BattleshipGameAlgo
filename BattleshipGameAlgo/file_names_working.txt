@@ -12,6 +12,7 @@ Bonus.cpp
 Bonus.h
 Capture.PNG
 Contants.h
+file_names.txt
 file_names_working.txt
 functions shit for validate board.txt
 GameBordUtils.cpp
@@ -21,6 +22,4 @@ IBattleshipGameAlgo.h
 IOLib.h
 Logger.h
 main.cpp
-stdafx.cpp
-stdafx.h
-targetver.h
+stdafx.h.part

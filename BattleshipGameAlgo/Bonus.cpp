@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Bonus.h"
 #include "BattleshipGameAlgo.h"
 #include <thread>

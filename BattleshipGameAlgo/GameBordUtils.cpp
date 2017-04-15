@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "GameBordUtils.h"
 #include "IOLib.h"
@@ -306,7 +305,7 @@ bool GameBordUtils::IsLegalBoradChar(char current) {
 
 void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs) {
 	char* currentRow = board[row];
-	unsigned long long len = cs.length() < cols ? cs.length() : cols; //TODO: mordi build here does warning
+	unsigned long long len = cs.length() < cols ? cs.length() : cols; //TODO: mordi build here does warning cast from "cols" (int) into (unsinged long long)
 	for (int i = 0; i < len; i++)
 	{
 		char currentChar = cs[i];

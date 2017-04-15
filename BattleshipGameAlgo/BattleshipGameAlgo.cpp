@@ -1,7 +1,6 @@
 // BattleshipGameAlgo.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 #include "BattleshipGameAlgo.h"
 
 //a logger instance to log all data. initialized at main

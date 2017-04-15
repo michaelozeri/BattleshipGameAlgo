@@ -11,7 +11,7 @@ extern Logger AppLogger;
 /*
 * a utility class for keeping track of game state
 */
-class ShipDetatilsBoard //TODO: ask nathanel if ok to do outside battleship class
+class ShipDetatilsBoard 
 {
 	GameBordUtils _utils;
 public:
