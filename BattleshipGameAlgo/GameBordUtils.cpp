@@ -306,8 +306,8 @@ bool GameBordUtils::IsLegalBoradChar(char current) {
 
 void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs) {
 	char* currentRow = board[row];
-	unsigned long long len = cs.length() < cols ? cs.length() : cols;
-	for (size_t i = 0; i < len; i++)
+	unsigned long long len = cs.length() < cols ? cs.length() : cols; //TODO: mordi build here does warning
+	for (int i = 0; i < len; i++)
 	{
 		char currentChar = cs[i];
 		currentRow[i] = IsLegalBoradChar(currentChar) ? currentChar : BLANK;
@@ -364,9 +364,9 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) 
 {
-	for (size_t i = 0; i < rows; i++)
+	for (int i = 0; i < rows; i++)
 	{
-		for (size_t j = 0; j < cols; j++)
+		for (int j = 0; j < cols; j++)
 		{
 			stream << board[i][j];
 		}

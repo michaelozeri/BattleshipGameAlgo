@@ -9,15 +9,6 @@
 
 using namespace std;
 
-//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
-char* GetWorkingDirectory(char* partialPath){
-	char full[_MAX_PATH] = "";
-	if (_fullpath(full, partialPath, _MAX_PATH) == NULL) {
-		return NULL; //TODO OR replace to nullptr
-	}
-	return full; //TODO: fix this is returning garbage - OR
-}
-
 /*
  * @param argc - of main program 
  * @param argv - of main program
@@ -27,7 +18,9 @@ char* GetWorkingDirectory(char* partialPath){
  */
 string GetFilePathBySuffix(int argc, char** argv,string filesuffix)
 {
-	char* currentdirectory = GetWorkingDirectory(".\\");
+	char currentdirectory[_MAX_PATH];
+	//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
+	_fullpath(currentdirectory, ".\\", _MAX_PATH); // obtain current directory
 	string filename,suffix;
 	string delimiter = ".";
 	string nondefaultpath;
@@ -193,7 +186,6 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 int main(int argc, char* argv[]) 
 {
 	//TODO: OR - remove stdafx.cpp and all refernce to it
-	//TODO: Fix all warning compiled by Release X64
 	//TODO: Check if we need to print something else to the console
 	InitLogger();
                    

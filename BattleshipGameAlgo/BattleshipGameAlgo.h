@@ -11,7 +11,7 @@ extern Logger AppLogger;
 /*
 * a utility class for keeping track of game state
 */
-class ShipDetatilsBoard //TODO: mordi, need to remove from this header and make as a member of BattleshipGameAlgo
+class ShipDetatilsBoard //TODO: ask nathanel if ok to do outside battleship class
 {
 	GameBordUtils _utils;
 public:
