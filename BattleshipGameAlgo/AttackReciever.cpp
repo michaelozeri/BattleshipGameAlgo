@@ -17,6 +17,7 @@ int AttackReciever::ReadNextAttack(pair<int, int>& pair)
 
 	// Read next line
 	getline(_file, line);
+	line.erase(remove(line.begin(), line.end(), '\r'), line.end());
 
 	// Error occured on reading and EOF didn't reach
 	if (!_file && !_file.eof())
