@@ -302,3 +302,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 BattleshipGameAlgo/bad_board_2.sboard
+BattleshipGameAlgo/good_board_0.sboard
+BattleshipGameAlgo/file_names_working.txt
+*.attack-a
+BattleshipGameAlgo/B.attack-b
