@@ -2,13 +2,14 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-class FileReader{
-private:
-	std::string filePath;
-	std::ifstream fin;
+class FileReader
+{
+	string filePath;
+	ifstream fin;
 public:
 	FileReader(const std::string& path) :filePath(path)
 	{
@@ -17,6 +18,7 @@ public:
 	string& ReadLine(string& line)
 	{
 		getline(fin, line);
+		line.erase(remove(line.begin(), line.end(), '\r'), line.end());
 		return line;
 	}
 
@@ -45,7 +47,7 @@ public:
 */
 class Logger{
 public:
-	std::ofstream logFile;
+	ofstream logFile;
 
 	void InitLogger(const std::string& logPath)
 	{

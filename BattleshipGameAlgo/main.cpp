@@ -196,16 +196,6 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 	PrintSinkCharRec(maingameboard,b, i + 1, j, player);
 }
 
-bool isAllNum(char* str,int len) {
-	for (int i = 0; i < len; i++)
-	{
-		if (!isdigit(str[i])) {
-			return false;
-		}
-	}
-	return true;
-}
-
 int main(int argc, char* argv[]) 
 {
 	bool direxists = false; 
@@ -216,16 +206,20 @@ int main(int argc, char* argv[])
 	string dirPath = "NS";
 	
 	if (argc > 1) {
-		for (int i = 1; i < argc; i++) {
+		for (int i = 1; i < argc; i++) 
+		{
 			string s = argv[i];
 			if (!s.compare("-quiet")) {
 				p.isQuiet = true;
 			}
-			else if (!s.compare("-delay")) {
-				int del = atoi( argv[i + 1]);
+			else if (!s.compare("-delay")) 
+			{
+				int del = atoi(argv[i + 1]);
 				p.delayInMiliseconds = del;
+				i++;
 			}
-			else if (!isAllNum(argv[i], static_cast<int>(strlen(argv[i])))){
+			else
+			{
 				dirPath = argv[i];
 			}
 		}
