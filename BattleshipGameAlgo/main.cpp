@@ -27,7 +27,7 @@ bool DirExists(const std::string& dirName_in)
  * @return path to .sboard file (non-default / "" in case the working directory is chosen )
  * @return "ERR" in case of error / file not found
  */
-string GetFilePathBySuffix(int argc, char** argv,string filesuffix,bool direxists = true)
+string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool direxists = true)
 {
 	char currentdirectory[_MAX_PATH];
 	//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
@@ -40,8 +40,8 @@ string GetFilePathBySuffix(int argc, char** argv,string filesuffix,bool direxist
 	string templine;
 	if (argc > 1){
 		if (direxists) {
-			nondefaultpath = argv[1];
-			systemcallcommand = "dir " + nondefaultpath + " /b /a-d > file_names.txt";
+			nondefaultpath = customPath;
+			systemcallcommand = "dir \"" + nondefaultpath + "\" /b /a-d > file_names.txt";
 			system(systemcallcommand.c_str());
 			ifstream nondefaultstream("file_names.txt");
 			while (true) {
@@ -225,19 +225,21 @@ int main(int argc, char* argv[])
 				int del = atoi( argv[i + 1]);
 				p.delayInMiliseconds = del;
 			}
-			else if (!isAllNum(argv[i],strlen(argv[i]))){
+			else if (!isAllNum(argv[i], static_cast<int>(strlen(argv[i])))){
 				dirPath = argv[i];
 			}
 		}
-		if (dirPath.compare("NS")) {
-			direxists = DirExists(argv[1]);
-			if (!direxists) {
-				cout << "Wrong path:" << argv[1] << endl;
+		if (dirPath.compare("NS") != 0)
+		{
+			direxists = DirExists(dirPath);
+			if (!direxists) 
+			{
+				cout << "Wrong path:" << dirPath << endl;
 			}
 		}
 	}
 
-	string mainboardpath = GetFilePathBySuffix(argc, argv,".sboard",direxists); 
+	string mainboardpath = GetFilePathBySuffix(argc, dirPath,".sboard",direxists);
 	if (mainboardpath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
 		AppLogger.LoggerDispose();
@@ -256,7 +258,7 @@ int main(int argc, char* argv[])
 	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
 	string Aattackpath, Battackpath;
-	Aattackpath = GetFilePathBySuffix(argc, argv, ".attack-a", direxists);
+	Aattackpath = GetFilePathBySuffix(argc, dirPath, ".attack-a", direxists);
 	if (Aattackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player A" << endl;
@@ -264,7 +266,7 @@ int main(int argc, char* argv[])
 		AppLogger.LoggerDispose();
 		return -1;
 	}
-	Battackpath = GetFilePathBySuffix(argc, argv, ".attack-b", direxists);
+	Battackpath = GetFilePathBySuffix(argc, dirPath, ".attack-b", direxists);
 	if (Battackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player B" << endl;
