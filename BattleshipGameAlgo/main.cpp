@@ -198,23 +198,25 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 
 int main(int argc, char* argv[]) 
 {
-	bool direxists; //TODO: Ozeri add default value here - can be warning
+	bool direxists = false; 
 	InitLogger();
                    
 	ChangeFontSize();
 	BonusParams p; 
-	// TODO - Ozeri update also delay -delay <delay in ms>
-	//check if quiet is inserted
-	if (argc > 2){
-		string s1 = argv[1];
-		string s2 = argv[2];
-		if ((!s1.compare("-quiet")) || (!s2.compare("-quiet"))) {
-			p.isQuiet = true;
-		}
-	}
-
-	//check existance of directory
+	
 	if (argc > 1) {
+
+		for (int i = 1; i < argc; i++) {
+			string s = argv[i];
+			if (!s.compare("-quiet")) {
+				p.isQuiet = true;
+			}
+			else if (!s.compare("-delay")) {
+				int del = atoi( argv[i + 1]);
+				p.delayInMiliseconds = del;
+			}
+		}
+		
 		direxists = DirExists(argv[1]);
 		if (!direxists) {
 			cout << "Wrong path:" << argv[1] << endl;
