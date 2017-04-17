@@ -198,7 +198,7 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 
 int main(int argc, char* argv[]) 
 {
-	bool direxists;
+	bool direxists; //TODO: Ozeri add default value here - can be warning
 	InitLogger();
                    
 	ChangeFontSize();
