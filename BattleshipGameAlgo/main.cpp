@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
                    
 	ChangeFontSize();
 	BonusParams p; 
-
+	// TODO - Ozeri update also delay -delay <delay in ms>
 	//check if quiet is inserted
 	if (argc > 2){
 		string s1 = argv[1];
