@@ -1,9 +1,9 @@
 set(user1 mordehaiz)
-set(user2 heizenberg)
-set(user3 nevuhadnetzer)
+set(user2 michaelozeri)
+set(user3 Rantoledo)
 set(id1 "205969710")
-set(id2 "123456789")
-set(id3 "123456789")
+set(id2 "302444229")
+set(id3 "200024438")
 set (SOURCE_FILES
 	AttackReciever.cpp
 	BattleshipGameAlgo.cpp

@@ -196,6 +196,16 @@ void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 	PrintSinkCharRec(maingameboard,b, i + 1, j, player);
 }
 
+bool isAllNum(char* str,int len) {
+	for (int i = 0; i < len; i++)
+	{
+		if (!isdigit(str[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
 int main(int argc, char* argv[]) 
 {
 	bool direxists = false; 
@@ -203,9 +213,9 @@ int main(int argc, char* argv[])
                    
 	ChangeFontSize();
 	BonusParams p; 
+	string dirPath = "NS";
 	
 	if (argc > 1) {
-
 		for (int i = 1; i < argc; i++) {
 			string s = argv[i];
 			if (!s.compare("-quiet")) {
@@ -215,11 +225,15 @@ int main(int argc, char* argv[])
 				int del = atoi( argv[i + 1]);
 				p.delayInMiliseconds = del;
 			}
+			else if (!isAllNum(argv[i],strlen(argv[i]))){
+				dirPath = argv[i];
+			}
 		}
-		
-		direxists = DirExists(argv[1]);
-		if (!direxists) {
-			cout << "Wrong path:" << argv[1] << endl;
+		if (dirPath.compare("NS")) {
+			direxists = DirExists(argv[1]);
+			if (!direxists) {
+				cout << "Wrong path:" << argv[1] << endl;
+			}
 		}
 	}
 
