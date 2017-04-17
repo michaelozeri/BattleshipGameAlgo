@@ -352,8 +352,9 @@ int main(int argc, char* argv[])
 
 			if (IsPlayerWon(PlayerAID, playerAboardDetails, playerBboardDetails))
 			{
+				char wonChar = 'A';
 				delete bonus;
-				cout << "Player A won" << endl;
+				cout << "Player " << wonChar << " won" << endl;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
 				GameBordUtils::DeleteBoard(maingameboard);
@@ -363,8 +364,9 @@ int main(int argc, char* argv[])
 			}
 			if (IsPlayerWon(PlayerBID, playerAboardDetails, playerBboardDetails))
 			{
+				char wonChar = 'B';
+				cout << "Player " << wonChar << " won" << endl;
 				delete bonus;
-				cout << "Player B won" << endl;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
 				GameBordUtils::DeleteBoard(maingameboard);
