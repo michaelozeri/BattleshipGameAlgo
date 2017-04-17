@@ -8,7 +8,7 @@
 
 #define ROWS 10
 #define COLS 10
-#define BLANK '*'
+#define BLANK ' '
 #define HIT_CHAR '#'
 #define SINK_CHAR '@'
 
@@ -42,4 +42,3 @@ enum class BoardFileErrorCode {Success, UnknownError};
 #define RocketShipPoints 3
 #define SubmarinePoints 7
 #define DestroyerPoints 8
-

@@ -15,13 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IBattleshipGameAlgo.h">
+    <ClCompile Include="AttackReciever.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleshipGameAlgo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBordUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AttackReciever.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BattleshipGameAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IOLib.h">
+    <ClInclude Include="Bonus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Contants.h">
@@ -30,28 +47,14 @@
     <ClInclude Include="GameBordUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AttackReciever.h">
+    <ClInclude Include="IBattleshipGameAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bonus.h">
+    <ClInclude Include="IOLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="BattleshipGameAlgo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameBordUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackReciever.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bonus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

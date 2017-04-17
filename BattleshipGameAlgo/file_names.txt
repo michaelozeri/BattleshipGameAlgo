@@ -1,2 +1,0 @@
-A.attack-a
-B.attack-b
