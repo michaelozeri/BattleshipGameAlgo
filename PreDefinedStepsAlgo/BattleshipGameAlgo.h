@@ -1,33 +1,10 @@
 #pragma once
 
 #include "IBattleshipGameAlgo.h"
-#include "IOLib.h"
-#include "GameBordUtils.h"
-#include "AttackReciever.h"
 
 //a logger instance to log all data. initialized at main
 extern Logger AppLogger;
 
-/*
-* a utility class for keeping track of game state
-*/
-class ShipDetatilsBoard 
-{
-	GameBordUtils _utils;
-public:
-	int playerID;
-	char** mainboard;
-
-	int RubberBoatCells;
-	int RocketShipCells;
-	int SubmarineCells;
-	int DestroyeCells;
-
-	int negativeScore; // Save the score of the other player
-	ShipDetatilsBoard(char** board, int playerID);
-	AttackResult GetAttackResult(pair<int, int> attack);
-	bool IsLoose() const;
-};
 
 /*
 * a class that represents a player at the game

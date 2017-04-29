@@ -147,7 +147,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BattleshipGameAlgo.h" />
-    <ClInclude Include="IBattleshipGameAlgo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BattleshipGameAlgo.cpp" />

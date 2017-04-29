@@ -150,13 +150,15 @@
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="Contants.h" />
     <ClInclude Include="GameBoardUtils.h" />
+    <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="IOLib.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="ShipDetailsBoard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AttackReciever.cpp" />
     <ClCompile Include="Bonus.cpp" />
-    <ClCompile Include="GameBordUtils.cpp" />
+    <ClCompile Include="GameBoardUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

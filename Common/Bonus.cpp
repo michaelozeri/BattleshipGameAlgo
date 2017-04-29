@@ -1,6 +1,6 @@
 #include "Bonus.h"
 #include <thread>
-#include "GameBordUtils.h"
+#include "../Common/GameBoardUtils.h"
 
 Bonus::Bonus(bool enable, int waitTimeout): enable(enable), waitInMiliseconds(waitTimeout), absX(0), absY(0)
 {
@@ -172,7 +172,7 @@ void Bonus::PrintPlayerChar(char letter, short x, short y, int playerID, bool is
 	int currentPlayer = playerID;
 	if(currentPlayer == 3)
 	{
-		currentPlayer = GameBordUtils::GetCharPlayerId(letter);
+		currentPlayer = GameBoardUtils::GetCharPlayerId(letter);
 	}
 
 	RetVal val = gotoxy(x, y);

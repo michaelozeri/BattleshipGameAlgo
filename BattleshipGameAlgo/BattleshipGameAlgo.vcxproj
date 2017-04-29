@@ -117,9 +117,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IBattleshipGameAlgo.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{99bdafa2-3cc5-490b-9fe3-8fb5c865b3d5}</Project>
     </ProjectReference>

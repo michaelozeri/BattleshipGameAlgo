@@ -2,7 +2,10 @@
 #include <thread>
 #include <fstream>
 #include <iostream>
-#include "Common/GameBoardUtils.h"
+#include "../Common/IBattleshipGameAlgo.h"
+#include "../Common/GameBoardUtils.h"
+#include "../Common/ShipDetailsBoard.h"
+#include "../Common/Bonus.h"
 
 using namespace std;
 
@@ -98,8 +101,8 @@ string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool 
 
 char** ClonePlayerBoard(const char** fullBoard, int i)
 {
-	char** playerBoard = GameBordUtils::AllocateNewBoard();
-	GameBordUtils::CloneBoardToPlayer(fullBoard, i, playerBoard);
+	char** playerBoard = GameBoardUtils::AllocateNewBoard();
+	GameBoardUtils::CloneBoardToPlayer(fullBoard, i, playerBoard);
 	return playerBoard;
 }
 
@@ -107,16 +110,16 @@ void SetPlayerBoards(char** board, BattleshipGameAlgo& playerA, BattleshipGameAl
 {
 	char** playerAboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
 	AppLogger.logFile << "CloneBoardForA" << endl;
-	GameBordUtils::PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
+	GameBoardUtils::PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
 
 	char** playerBboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
 	AppLogger.logFile << "CloneBoardForB" << endl;
-	GameBordUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
+	GameBoardUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
 	playerA.setBoard(const_cast<const char**>(playerAboard), ROWS, COLS);
 	playerB.setBoard(const_cast<const char**>(playerBboard), ROWS, COLS);
 
-	GameBordUtils::DeleteBoard(playerAboard);
-	GameBordUtils::DeleteBoard(playerBboard);
+	GameBoardUtils::DeleteBoard(playerAboard);
+	GameBoardUtils::DeleteBoard(playerBboard);
 }
 
 void InitLogger()
@@ -138,17 +141,17 @@ pair<int, int> GetNextPlayerAttack(int player_id,  BattleshipGameAlgo& player_a,
 	return{ -1,-1 };
 }
 
-AttackResult GetAttackResult(const pair<int, int>& pair, char** board, ShipDetatilsBoard* detailsA, ShipDetatilsBoard* detailsB)
+AttackResult GetAttackResult(const pair<int, int>& pair, char** board, ShipDetailsBoard* detailsA, ShipDetailsBoard* detailsB)
 {
-	return GameBordUtils::IsPlayerIdChar(PlayerAID,board[pair.first][pair.second]) ? detailsA->GetAttackResult(pair) : detailsB->GetAttackResult(pair);
+	return GameBoardUtils::IsPlayerIdChar(PlayerAID,board[pair.first][pair.second]) ? detailsA->GetAttackResult(pair) : detailsB->GetAttackResult(pair);
 }
 
-bool IsPlayerWon(int currentPlayer, ShipDetatilsBoard* detailsA, ShipDetatilsBoard* detailsB)
+bool IsPlayerWon(int currentPlayer, ShipDetailsBoard* detailsA, ShipDetailsBoard* detailsB)
 {
 	return currentPlayer == PlayerAID ? detailsB->IsLoose() : detailsA->IsLoose();
 }
 
-void PrintPoints(ShipDetatilsBoard* playerA, ShipDetatilsBoard* playerB)
+void PrintPoints(ShipDetailsBoard* playerA, ShipDetailsBoard* playerB)
 {
 	cout << "Points:" << endl;
 	cout << "Player A: " << playerB->negativeScore << endl;
@@ -240,22 +243,22 @@ int main(int argc, char* argv[])
 	}
 
 	// board - will save updated and full board of two players
-	char** maingameboard = GameBordUtils::AllocateNewBoard();
+	char** maingameboard = GameBoardUtils::AllocateNewBoard();
 	
-	if(GameBordUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, mainboardpath)!= BoardFileErrorCode::Success)
+	if(GameBoardUtils::LoadBoardFromFile(maingameboard, ROWS, COLS, mainboardpath)!= BoardFileErrorCode::Success)
 	{
-		GameBordUtils::DeleteBoard(maingameboard);
+		GameBoardUtils::DeleteBoard(maingameboard);
 		AppLogger.LoggerDispose();
 		return -1;
 	}
-	GameBordUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
+	GameBoardUtils::PrintBoard(AppLogger.logFile, maingameboard, ROWS, COLS);
 
 	string Aattackpath, Battackpath;
 	Aattackpath = GetFilePathBySuffix(argc, dirPath, ".attack-a", direxists);
 	if (Aattackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player A" << endl;
-		GameBordUtils::DeleteBoard(maingameboard);
+		GameBoardUtils::DeleteBoard(maingameboard);
 		AppLogger.LoggerDispose();
 		return -1;
 	}
@@ -263,7 +266,7 @@ int main(int argc, char* argv[])
 	if (Battackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player B" << endl;
-		GameBordUtils::DeleteBoard(maingameboard);
+		GameBoardUtils::DeleteBoard(maingameboard);
 		AppLogger.LoggerDispose();
 		return -1;
 	}
@@ -274,8 +277,8 @@ int main(int argc, char* argv[])
 	SetPlayerBoards(maingameboard, playerA, playerB);
 	
 	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside - (In next HW Next)
-	ShipDetatilsBoard* playerAboardDetails = new ShipDetatilsBoard(maingameboard, PlayerAID);
-	ShipDetatilsBoard* playerBboardDetails = new ShipDetatilsBoard(maingameboard, PlayerBID);
+	ShipDetailsBoard* playerAboardDetails = new ShipDetailsBoard(maingameboard, PlayerAID);
+	ShipDetailsBoard* playerBboardDetails = new ShipDetailsBoard(maingameboard, PlayerBID);
 
 	int playerIdToPlayNext = PlayerAID;
 
@@ -293,7 +296,7 @@ int main(int argc, char* argv[])
 
 		if ((tempPair.first == -2) && (tempPair.second == -2))
 		{
-			GameBordUtils::DeleteBoard(maingameboard);
+			GameBoardUtils::DeleteBoard(maingameboard);
 			delete playerAboardDetails;
 			delete playerBboardDetails;
 			AppLogger.LoggerDispose();
@@ -309,7 +312,7 @@ int main(int argc, char* argv[])
 		else
 		{
 			char attckCell = maingameboard[tempPair.first][tempPair.second];
-			bool isSelfAttack = GameBordUtils::IsPlayerIdChar(playerIdToPlayNext, attckCell);
+			bool isSelfAttack = GameBoardUtils::IsPlayerIdChar(playerIdToPlayNext, attckCell);
 
 			//calculate attack and update mainboard
 			AttackResult tempattackresult = GetAttackResult(tempPair, maingameboard, playerAboardDetails, playerBboardDetails);
@@ -351,7 +354,7 @@ int main(int argc, char* argv[])
 				cout << "Player A won" << endl;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
-				GameBordUtils::DeleteBoard(maingameboard);
+				GameBoardUtils::DeleteBoard(maingameboard);
 				delete playerAboardDetails;
 				delete playerBboardDetails;
 				return 0;
@@ -362,7 +365,7 @@ int main(int argc, char* argv[])
 				cout << "Player B won" << endl;
 				PrintPoints(playerAboardDetails, playerBboardDetails);
 
-				GameBordUtils::DeleteBoard(maingameboard);
+				GameBoardUtils::DeleteBoard(maingameboard);
 				delete playerAboardDetails;
 				delete playerBboardDetails;
 				return 0;
@@ -373,7 +376,7 @@ int main(int argc, char* argv[])
 	delete bonus;
 	PrintPoints(playerAboardDetails, playerBboardDetails);
 
-	GameBordUtils::DeleteBoard(maingameboard);
+	GameBoardUtils::DeleteBoard(maingameboard);
 	delete playerAboardDetails;
 	delete playerBboardDetails;	
 	AppLogger.LoggerDispose();

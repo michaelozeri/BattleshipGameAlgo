@@ -2,6 +2,12 @@
 //
 
 #include "BattleshipGameAlgo.h"
+#include <utility>
+#include "../Common/GameBoardUtils.h"
+#include "../Common/ShipDetailsBoard.h"
+#include "../Common/IOLib.h"
+#include "../Common/AttackReciever.h"
+#include "IBattleshipGameAlgo.h"
 
 //a logger instance to log all data. initialized at main
 Logger AppLogger;
@@ -38,8 +44,8 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols) 
 {
-	m_board = GameBordUtils::AllocateNewBoard();
-	GameBordUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
+	m_board = GameBoardUtils::AllocateNewBoard();
+	GameBoardUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
 }
 
 /*
@@ -52,7 +58,7 @@ void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, Atta
 
 BattleshipGameAlgo::~BattleshipGameAlgo()
 {
-	GameBordUtils::DeleteBoard(m_board);
+	GameBoardUtils::DeleteBoard(m_board);
 	delete m_attackReceiver;
 }
 
@@ -63,7 +69,7 @@ bool BattleshipGameAlgo::AttacksDone() const
 }
 
 
-ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(playerID), mainboard(board), RubberBoatCells(0), RocketShipCells(0), SubmarineCells(0), DestroyeCells(0), negativeScore(0)
+ShipDetailsBoard::ShipDetailsBoard(char** board, int playerID) : playerID(playerID), mainboard(board), RubberBoatCells(0), RocketShipCells(0), SubmarineCells(0), DestroyeCells(0), negativeScore(0)
 {
 	for (size_t i = 0; i < ROWS; i++)
 	{
@@ -99,7 +105,7 @@ ShipDetatilsBoard::ShipDetatilsBoard(char** board, int playerID) : playerID(play
 * \param attack 
 * \return AtackResult enum instance and update the board
 */
-AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
+AttackResult ShipDetailsBoard::GetAttackResult(pair<int, int> attack)
 {
 	AttackResult result = AttackResult::Miss;
 	char cell = mainboard[attack.first][attack.second];
@@ -138,7 +144,7 @@ AttackResult ShipDetatilsBoard::GetAttackResult(pair<int, int> attack)
 	return result;
 }
 
-bool ShipDetatilsBoard::IsLoose() const
+bool ShipDetailsBoard::IsLoose() const
 {
 	int sum = RubberBoatCells + RocketShipCells + SubmarineCells + DestroyeCells;
 	return (sum == 0);

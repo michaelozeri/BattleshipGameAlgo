@@ -1,5 +1,5 @@
 
-#include "GameBordUtils.h"
+#include "GameBoardUtils.h"
 #include "IOLib.h"
 #include "Contants.h"
 
@@ -123,7 +123,7 @@ bool CheckShipSize(char** board, char direction, int i, int j, char type)
 /*
 * this function validates the game board and prints by order the errors in the game
 */
-BoardFileErrorCode GameBordUtils::ValidateGameBoard(char** board, int rows, int cols)
+BoardFileErrorCode GameBoardUtils::ValidateGameBoard(char** board, int rows, int cols)
 { 
 	int playerAboatNum = 0; // Holds valid boat num from player A
 	int playerBboatNum = 0; // Holds valid boat num from player B
@@ -258,7 +258,7 @@ BoardFileErrorCode GameBordUtils::ValidateGameBoard(char** board, int rows, int 
 	return isNotLegalBoard ? BoardFileErrorCode::UnknownError : BoardFileErrorCode::Success;
 }
 
-void GameBordUtils::InitBoard(char** board, int rows, int cols)
+void GameBoardUtils::InitBoard(char** board, int rows, int cols)
 {
 	for (size_t i = 0; i < ROWS; i++)
 	{
@@ -269,7 +269,7 @@ void GameBordUtils::InitBoard(char** board, int rows, int cols)
 	}
 }
 
-bool GameBordUtils::IsPlayerIdChar(int playerID, char current) {
+bool GameBoardUtils::IsPlayerIdChar(int playerID, char current) {
 	if (playerID == PlayerAID)
 	{
 		return current == RubberBoatA ||
@@ -287,7 +287,7 @@ bool GameBordUtils::IsPlayerIdChar(int playerID, char current) {
 	return false;
 }
 
-int GameBordUtils::GetCharPlayerId(char current)
+int GameBoardUtils::GetCharPlayerId(char current)
 {
 	if (IsPlayerIdChar(PlayerAID, current))
 	{
@@ -299,11 +299,11 @@ int GameBordUtils::GetCharPlayerId(char current)
 	return 2;
 }
 
-bool GameBordUtils::IsLegalBoradChar(char current) {
+bool GameBoardUtils::IsLegalBoradChar(char current) {
 	return IsPlayerIdChar(PlayerAID, current) || IsPlayerIdChar(PlayerBID, current);
 }
 
-void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs) {
+void GameBoardUtils::LoadLineToBoard(char** board, int row, int cols, const string& cs) {
 	char* currentRow = board[row];
 
 	int lenght_int = static_cast<int>(cs.length());
@@ -315,14 +315,14 @@ void GameBordUtils::LoadLineToBoard(char** board, int row, int cols, const strin
 	}
 }
 
-char** GameBordUtils::AllocateNewBoard() {
+char** GameBoardUtils::AllocateNewBoard() {
 	char** board = new char*[ROWS];
 	for (int i = 0; i < ROWS; ++i)
 		board[i] = new char[COLS];
 	return board;
 }
 
-void GameBordUtils::DeleteBoard(char** board) {
+void GameBoardUtils::DeleteBoard(char** board) {
 	// Delete board array
 	for (int i = 0; i < ROWS; ++i) {
 		delete[] board[i];
@@ -331,7 +331,7 @@ void GameBordUtils::DeleteBoard(char** board) {
 }
 
 
-BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath) 
+BoardFileErrorCode GameBoardUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath) 
 {
 	BoardFileErrorCode errcode = BoardFileErrorCode::Success;
 	//set all board to blank
@@ -351,8 +351,8 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 	fileReader.CloseFile();
 	
 	// Clone current board, becaue ValidateGameBoard changed the board
-	char** cloneBoard = GameBordUtils::AllocateNewBoard();
-	GameBordUtils::CloneBoard(board, cloneBoard);
+	char** cloneBoard = GameBoardUtils::AllocateNewBoard();
+	GameBoardUtils::CloneBoard(board, cloneBoard);
 	errcode = ValidateGameBoard(cloneBoard, ROWS, COLS);
 
 	// Delete clone board
@@ -363,7 +363,7 @@ BoardFileErrorCode GameBordUtils::LoadBoardFromFile(char** board, int rows, int 
 
 
 
-void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) 
+void GameBoardUtils::PrintBoard(ostream& stream, char** board, int rows, int cols) 
 {
 	for (int i = 0; i < rows; i++)
 	{
@@ -375,7 +375,7 @@ void GameBordUtils::PrintBoard(ostream& stream, char** board, int rows, int cols
 	}
 }
 
-void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board) {
+void GameBoardUtils::CloneBoardToPlayer(const char** full_board, int playerID, char** player_board) {
 	InitBoard(player_board, ROWS, COLS);
 
 	for (size_t i = 0; i < ROWS; i++)
@@ -387,7 +387,7 @@ void GameBordUtils::CloneBoardToPlayer(const char** full_board, int playerID, ch
 	}
 }
 
-void GameBordUtils::CloneBoard(char** full_board, char** player_board) {
+void GameBoardUtils::CloneBoard(char** full_board, char** player_board) {
 	InitBoard(player_board, ROWS, COLS);
 
 	for (size_t i = 0; i < ROWS; i++)
