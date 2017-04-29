@@ -7,7 +7,6 @@
 #include "../Common/ShipDetailsBoard.h"
 #include "../Common/IOLib.h"
 #include "../Common/AttackReciever.h"
-#include "IBattleshipGameAlgo.h"
 
 //a logger instance to log all data. initialized at main
 Logger AppLogger;
@@ -44,7 +43,7 @@ this function is called at startup to update each players board game
 */
 void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols) 
 {
-	m_board = GameBoardUtils::AllocateNewBoard();
+	m_board = GameBoardUtils::InitializeNewEmptyBoard();
 	GameBoardUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
 }
 

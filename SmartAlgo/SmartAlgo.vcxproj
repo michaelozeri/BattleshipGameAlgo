@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IBattleshipGameAlgo.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B4F58822-C45A-448E-9B63-519D9C418258}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

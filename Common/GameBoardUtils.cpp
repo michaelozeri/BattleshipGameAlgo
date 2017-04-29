@@ -315,7 +315,7 @@ void GameBoardUtils::LoadLineToBoard(char** board, int row, int cols, const stri
 	}
 }
 
-char** GameBoardUtils::AllocateNewBoard() {
+char** GameBoardUtils::InitializeNewEmptyBoard() {
 	char** board = new char*[ROWS];
 	for (int i = 0; i < ROWS; ++i)
 		board[i] = new char[COLS];
@@ -351,7 +351,7 @@ BoardFileErrorCode GameBoardUtils::LoadBoardFromFile(char** board, int rows, int
 	fileReader.CloseFile();
 	
 	// Clone current board, becaue ValidateGameBoard changed the board
-	char** cloneBoard = GameBoardUtils::AllocateNewBoard();
+	char** cloneBoard = GameBoardUtils::InitializeNewEmptyBoard();
 	GameBoardUtils::CloneBoard(board, cloneBoard);
 	errcode = ValidateGameBoard(cloneBoard, ROWS, COLS);
 

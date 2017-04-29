@@ -17,7 +17,7 @@ public:
 	static int GetCharPlayerId(char current);
 	static bool IsLegalBoradChar(char current);
 	static void LoadLineToBoard(char** board, int row, int cols, const string& cs);
-	static char** AllocateNewBoard();
+	static char** InitializeNewEmptyBoard();
 	static void DeleteBoard(char** board);
 	static BoardFileErrorCode LoadBoardFromFile(char** board, int rows, int cols, const string& filePath);
 	static void PrintBoard(ostream& stream, char** board, int rows, int cols);
