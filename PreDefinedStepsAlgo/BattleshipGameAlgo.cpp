@@ -36,7 +36,7 @@ std::pair<int,int> BattleshipGameAlgo::attack()
 /*
 this function is called at startup to update each players board game
 */
-void BattleshipGameAlgo::setBoard(const char** board, int numRows, int numCols) 
+void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols) 
 {
 	m_board = GameBordUtils::AllocateNewBoard();
 	GameBordUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);

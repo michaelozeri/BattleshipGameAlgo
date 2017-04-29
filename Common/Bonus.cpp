@@ -1,5 +1,4 @@
 #include "Bonus.h"
-#include "BattleshipGameAlgo.h"
 #include <thread>
 #include "GameBordUtils.h"
 
