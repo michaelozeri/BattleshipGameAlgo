@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BattleshipGameAlgo", "BattleshipGameAlgo\BattleshipGameAlgo.vcxproj", "{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HWProject", "BattleshipGameAlgo\BattleshipGameAlgo.vcxproj", "{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NaiveAlgo", "NaiveAlgo\NaiveAlgo.vcxproj", "{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PreDefinedStepsAlgo", "PreDefinedStepsAlgo\PreDefinedStepsAlgo.vcxproj", "{E68B8155-D10A-42AC-B054-ECA26811FE8A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmartAlgo", "SmartAlgo\SmartAlgo.vcxproj", "{B4F58822-C45A-448E-9B63-519D9C418258}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,30 @@ Global
 		{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}.Release|x64.Build.0 = Release|x64
 		{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}.Release|x86.ActiveCfg = Release|Win32
 		{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}.Release|x86.Build.0 = Release|Win32
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Debug|x64.ActiveCfg = Debug|x64
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Debug|x64.Build.0 = Debug|x64
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Debug|x86.ActiveCfg = Debug|Win32
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Debug|x86.Build.0 = Debug|Win32
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Release|x64.ActiveCfg = Release|x64
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Release|x64.Build.0 = Release|x64
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Release|x86.ActiveCfg = Release|Win32
+		{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}.Release|x86.Build.0 = Release|Win32
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Debug|x64.ActiveCfg = Debug|x64
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Debug|x64.Build.0 = Debug|x64
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Debug|x86.ActiveCfg = Debug|Win32
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Debug|x86.Build.0 = Debug|Win32
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Release|x64.ActiveCfg = Release|x64
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Release|x64.Build.0 = Release|x64
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Release|x86.ActiveCfg = Release|Win32
+		{E68B8155-D10A-42AC-B054-ECA26811FE8A}.Release|x86.Build.0 = Release|Win32
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Debug|x64.ActiveCfg = Debug|x64
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Debug|x64.Build.0 = Debug|x64
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Debug|x86.ActiveCfg = Debug|Win32
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Debug|x86.Build.0 = Debug|Win32
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Release|x64.ActiveCfg = Release|x64
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Release|x64.Build.0 = Release|x64
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Release|x86.ActiveCfg = Release|Win32
+		{B4F58822-C45A-448E-9B63-519D9C418258}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
