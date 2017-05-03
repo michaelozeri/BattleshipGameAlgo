@@ -33,6 +33,9 @@
     <ClInclude Include="ShipDetailsBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IBattleshipGameAlgo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AttackReciever.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameBoardUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShipDetailsBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

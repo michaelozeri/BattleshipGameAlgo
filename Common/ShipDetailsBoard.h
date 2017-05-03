@@ -1,5 +1,6 @@
 #pragma once
 #include "GameBoardUtils.h"
+#include "IBattleshipGameAlgo.h"
 
 /*
 * a utility class for keeping track of game state

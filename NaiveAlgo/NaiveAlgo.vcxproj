@@ -19,7 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleshipGameAlgo.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BattleshipGameAlgo.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}</ProjectGuid>
