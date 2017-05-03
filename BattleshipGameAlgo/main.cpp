@@ -75,7 +75,7 @@ int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncTyp
 		cout << "ERROR: could not load dll files" << endl;
 		return EXIT_FAILURE; //TODO: check if ok to exit like this
 	}
-	if (dll_vec.size < 2) {
+	if (dll_vec.size() < 2) {
 		cout << "ERROR: not enough dll files" << endl;
 		return EXIT_FAILURE; //TODO: check is ok and we do not need to search working directory
 	}
@@ -126,7 +126,7 @@ string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool 
 	string delimiter = ".";
 	string nondefaultpath;
 	string systemcallcommand;
-	size_t pos = 0;
+	size_t pos;
 	string templine;
 	if (argc > 1){
 		if (direxists) {
@@ -164,7 +164,6 @@ string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool 
 			nondefaultstream.close();
 		}
 	}
-	pos = 0;
 	//file not found in non-default directory
 	systemcallcommand = "dir /b /a-d > file_names_working.txt";
 	system(systemcallcommand.c_str());
@@ -184,7 +183,6 @@ string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool 
 			return filename + suffix;
 		}
 	}
-	defaultpathstream.close();
 }
 
 char** ClonePlayerBoard(const char** fullBoard, int i)

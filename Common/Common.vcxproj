@@ -150,9 +150,7 @@
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="Contants.h" />
     <ClInclude Include="GameBoardUtils.h" />
-    <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="IOLib.h" />
-    <ClInclude Include="Logger.h" />
     <ClInclude Include="ShipDetailsBoard.h" />
   </ItemGroup>
   <ItemGroup>
