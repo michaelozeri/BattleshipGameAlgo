@@ -9,7 +9,6 @@ using namespace std;
 * a utility class for performing static functions at main function
 */
 class GameBoardUtils {
-private: 
 	static BoardFileErrorCode ValidateGameBoard(char** board, int rows, int cols);
 public:
 	static void InitBoard(char** board, int rows, int cols);

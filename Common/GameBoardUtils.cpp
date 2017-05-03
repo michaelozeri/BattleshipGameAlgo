@@ -333,7 +333,7 @@ void GameBoardUtils::DeleteBoard(char** board) {
 
 BoardFileErrorCode GameBoardUtils::LoadBoardFromFile(char** board, int rows, int cols, const string& filePath) 
 {
-	BoardFileErrorCode errcode = BoardFileErrorCode::Success;
+	BoardFileErrorCode errcode;
 	//set all board to blank
 	InitBoard(board, rows, cols);
 

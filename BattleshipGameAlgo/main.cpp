@@ -2,12 +2,11 @@
 #include <thread>
 #include <fstream>
 #include <iostream>
-#include "../Common/IBattleshipGameAlgo.h"
 #include "../Common/GameBoardUtils.h"
 #include "../Common/ShipDetailsBoard.h"
 #include "../Common/Bonus.h"
-#include <map> 
 #include <vector>
+#include "IBattleshipGameAlgo.h"
 
 typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)(); //TODO: is it right to declare here?
 

@@ -7,7 +7,6 @@ using namespace std;
 * a utility class for handeling all attack functionalities
 */
 class AttackReciever {
-private:
 	string path;
 	ifstream _file;
 public:
