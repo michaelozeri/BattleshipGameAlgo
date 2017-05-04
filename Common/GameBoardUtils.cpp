@@ -398,3 +398,36 @@ void GameBoardUtils::CloneBoard(char** full_board, char** player_board) {
 		}
 	}
 }
+
+void GameBoardUtils::MarkCannotAttack(char** markBoard, int playernum,char** mainBoard)
+{
+	for (int i = 0; i<ROWS; i++)
+	{
+		for (int j = 0; j<COLS; j++)
+		{
+			if (IsPlayerIdChar(playernum, mainBoard[i][j]))
+			{
+				//mark left of me
+				if((j>0)&&(!IsPlayerIdChar(playernum,mainBoard[i][j-1])))
+				{
+					markBoard[i][j-1] = 'V';
+				}
+				//mark right of me
+				if ((j<COLS-1) && (!IsPlayerIdChar(playernum, mainBoard[i][j+1])))
+				{
+					markBoard[i][j+1] = 'V';
+				}
+				//mark above me
+				if((i>0)&&(!IsPlayerIdChar(playernum,mainBoard[i-1][j])))
+				{
+					markBoard[i-1][j] = 'V';
+				}
+				//mark below me
+				if ((i<ROWS-1) && (!IsPlayerIdChar(playernum, mainBoard[i + 1][j])))
+				{
+					markBoard[i + 1][j] = 'V';
+				}
+			}
+		}
+	}
+}

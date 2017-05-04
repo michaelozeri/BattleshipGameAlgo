@@ -6,7 +6,6 @@
 #include "../Common/GameBoardUtils.h"
 #include "../Common/IOLib.h"
 
-
 /*
  * \brief 
  * \return (0,0) in case of EOF. (-1, -1) in case of any failure
@@ -27,10 +26,11 @@ std::pair<int,int> BattleshipGameAlgo::attack()
 	{
 		while(j<COLS)
 		{
-			if(GameBoardUtils::IsLegalBoradChar(m_board[i][j])&&m_cannotAttackBoard[i][j] == 'X') 
+			if(m_cannotAttackBoard[i][j] == 'X') 
 			{
-				//SET cannot attack this spot again
+				//set cannot attack this spot again
 				m_cannotAttackBoard[i][j] = 'V';
+				//set the next index to search from
 				if(j == COLS-1)
 				{
 					m_currentAttack.first = i + 1;
@@ -46,7 +46,9 @@ std::pair<int,int> BattleshipGameAlgo::attack()
 		}
 		i++;
 	}
-	
+
+	//end of attacks
+	m_attacksDone = true;
 	return{ 0,0 };
 }
 
@@ -65,11 +67,12 @@ void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, i
 	{
 		for (int j=0;j<COLS;j++)
 		{
-			m_cannotAttackBoard[i][j] = 'X';
+			m_cannotAttackBoard[i][j] = 'X'; //X means we can attack here. 'V' means not
 		}
 	}
 	GameBoardUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
-	//TODO: need to mark here where we cant attack
+	//prepering a matrix to know where not to attack
+	GameBoardUtils::MarkCannotAttack(m_cannotAttackBoard, m_myPlayerNum, m_board);
 }
 
 /*
@@ -78,7 +81,7 @@ checking of if the game is ended will be at main function
 */
 void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result) 
 {
-	//TODO: complete here
+	//TODO: complete notify - is it needed at all?
 }
 
 BattleshipGameAlgo::~BattleshipGameAlgo()

@@ -8,7 +8,7 @@
 #include <vector>
 #include "IBattleshipGameAlgo.h"
 
-typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)(); //TODO: is it right to declare here?
+typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)(); 
 
 using namespace std;
 
