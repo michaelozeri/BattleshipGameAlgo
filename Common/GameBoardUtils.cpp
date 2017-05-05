@@ -407,6 +407,7 @@ void GameBoardUtils::MarkCannotAttack(char** markBoard, int playernum,char** mai
 		{
 			if (IsPlayerIdChar(playernum, mainBoard[i][j]))
 			{
+				markBoard[i][j] = 'V';
 				//mark left of me
 				if((j>0)&&(!IsPlayerIdChar(playernum,mainBoard[i][j-1])))
 				{

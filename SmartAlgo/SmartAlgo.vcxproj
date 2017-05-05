@@ -20,6 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IBattleshipGameAlgo.h" />
+    <ClInclude Include="SmartBattleshipGameAlgo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SmartBattleshipGameAlgo.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B4F58822-C45A-448E-9B63-519D9C418258}</ProjectGuid>
