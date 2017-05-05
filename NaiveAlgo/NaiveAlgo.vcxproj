@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BattleshipGameAlgo.h" />
+    <ClInclude Include="NaiveBattleshipGameAlgo.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
   </ItemGroup>
   <ItemGroup>

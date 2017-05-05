@@ -1,14 +1,10 @@
-#include <windows.h>
-#include <thread>
-#include <fstream>
-#include <iostream>
 #include "../Common/GameBoardUtils.h"
-#include "../Common/ShipDetailsBoard.h"
+#include "ShipDetailsBoard.h"
 #include "../Common/Bonus.h"
 #include <vector>
 #include "IBattleshipGameAlgo.h"
 
-typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)(); 
+typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)();
 
 using namespace std;
 
@@ -97,108 +93,14 @@ int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncTyp
 	return 0;
 }
 
-//taken from: http://stackoverflow.com/questions/8233842/how-to-check-if-directory-exist-using-c-and-winapi
-bool DirExists(const std::string& dirName_in)
-{
-	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
-	if (ftyp == INVALID_FILE_ATTRIBUTES)
-		return false;  //something is wrong with your path!
-
-	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
-		return true;   // this is a directory!
-
-	return false;    // this is not a directory!
-}
-
-/*
- * @param argc - of main program 
- * @param argv - of main program
- * @param filesuffix - the suffix of the file we are searching for
- * @return path to .sboard file (non-default / "" in case the working directory is chosen )
- * @return "ERR" in case of error / file not found
- */
-string GetFilePathBySuffix(int argc, string customPath ,string filesuffix, bool direxists = true)
-{
-	char currentdirectory[_MAX_PATH];
-	//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
-	_fullpath(currentdirectory, ".\\", _MAX_PATH); // obtain current directory
-	string filename,suffix;
-	string delimiter = ".";
-	string nondefaultpath;
-	string systemcallcommand;
-	size_t pos;
-	string templine;
-	if (argc > 1){
-		if (direxists) {
-			nondefaultpath = customPath;
-			systemcallcommand = "dir \"" + nondefaultpath + "\" /b /a-d > file_names.txt";
-			system(systemcallcommand.c_str());
-			ifstream nondefaultstream("file_names.txt");
-			while (true) {
-				getline(nondefaultstream, templine);
-				if (nondefaultstream.eof()) {
-					if (filesuffix == ".sboard") {
-						cout << "Missing board file (*.sboard) looking in path: " << currentdirectory << endl;
-					}
-					else if (filesuffix == ".attack-a") {
-						cout << "Missing attack file for player A(*.attack - a) looking in path: " << currentdirectory << endl;
-					}
-					else {
-						cout << "Missing attack file for player B(*.attack - b) looking in path: " << currentdirectory << endl;
-					}
-					break;
-				}
-				pos = templine.find(delimiter);
-				suffix = templine.substr(pos, templine.length());
-				filename = templine.substr(0, pos);
-				if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
-					nondefaultstream.close();
-					if (nondefaultpath.at(nondefaultpath.length() - 1) == '\\') {
-						return nondefaultpath + filename + suffix; //argument is inserted with '\' at string ending
-					}
-					else {
-						return nondefaultpath + '\\' + filename + suffix; //argument is inserted without '\' at ending
-					}
-				}
-			}
-			nondefaultstream.close();
-		}
-	}
-	//file not found in non-default directory
-	systemcallcommand = "dir /b /a-d > file_names_working.txt";
-	system(systemcallcommand.c_str());
-	ifstream defaultpathstream("file_names_working.txt");
-	while (true) {
-		getline(defaultpathstream, templine);
-		if (defaultpathstream.eof()) {
-			cout << filesuffix+ " file was not found in working directory" << endl;
-			defaultpathstream.close();
-			return "ERR";
-		}
-		pos = templine.find(delimiter);
-		suffix = templine.substr(pos, templine.length());
-		filename = templine.substr(0, pos);
-		if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
-			defaultpathstream.close();
-			return filename + suffix;
-		}
-	}
-}
-
-char** ClonePlayerBoard(const char** fullBoard, int i)
-{
-	char** playerBoard = GameBoardUtils::InitializeNewEmptyBoard();
-	GameBoardUtils::CloneBoardToPlayer(fullBoard, i, playerBoard);
-	return playerBoard;
-}
 
 void SetPlayerBoards(char** board, IBattleshipGameAlgo* playerA, IBattleshipGameAlgo* playerB)
 {
-	char** playerAboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
+	char** playerAboard = GameBoardUtils::ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
 	AppLogger.logFile << "CloneBoardForA" << endl;
 	GameBoardUtils::PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
 
-	char** playerBboard = ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
+	char** playerBboard = GameBoardUtils::ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
 	AppLogger.logFile << "CloneBoardForB" << endl;
 	GameBoardUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
 	playerA->setBoard(0,const_cast<const char**>(playerAboard), ROWS, COLS);
@@ -244,26 +146,6 @@ void PrintPoints(ShipDetailsBoard* playerA, ShipDetailsBoard* playerB)
 	cout << "Player B: " << playerA->negativeScore << endl;
 }
 
-void ChangeFontSize()
-{
-	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_FONT_INFOEX orig = { sizeof(orig) };
-
-	if (GetCurrentConsoleFontEx(hStdout, FALSE, &orig))
-		AppLogger.logFile << "Got\n";
-	else
-		AppLogger.logFile << GetLastError();
-	
-	orig.dwFontSize.X = 12;
-	orig.dwFontSize.Y = 16;
-
-	if (SetCurrentConsoleFontEx(hStdout, FALSE, &orig))
-		AppLogger.logFile << "Set\n";
-	else
-		AppLogger.logFile << endl << GetLastError();
-
-}
 
 void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
 {
@@ -293,7 +175,7 @@ int main(int argc, char* argv[])
 	bool BattacksDone = false;
 	InitLogger();
                    
-	ChangeFontSize();
+	GameBoardUtils::ChangeFontSize();
 	BonusParams p; 
 	string dirPath("NS");
 	
@@ -318,7 +200,7 @@ int main(int argc, char* argv[])
 		}
 		if (dirPath.compare("NS") != 0)
 		{
-			dirExists = DirExists(dirPath);
+			dirExists = GameBoardUtils::DirExists(dirPath);
 			if (!dirExists) 
 			{
 				cout << "Wrong path:" << dirPath << endl;
@@ -333,7 +215,7 @@ int main(int argc, char* argv[])
 	}
 
 	//get .sboard file path
-	string mainboardpath = GetFilePathBySuffix(argc, dirPath,".sboard",dirExists);
+	string mainboardpath = GameBoardUtils::GetFilePathBySuffix(argc, dirPath,".sboard",dirExists);
 	if (mainboardpath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
 		AppLogger.LoggerDispose();
@@ -353,7 +235,7 @@ int main(int argc, char* argv[])
 
 	//get attack files path
 	string Aattackpath, Battackpath;
-	Aattackpath = GetFilePathBySuffix(argc, dirPath, ".attack-a", dirExists);
+	Aattackpath = GameBoardUtils::GetFilePathBySuffix(argc, dirPath, ".attack-a", dirExists);
 	if (Aattackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player A" << endl;
@@ -361,7 +243,7 @@ int main(int argc, char* argv[])
 		AppLogger.LoggerDispose();
 		return -1;
 	}
-	Battackpath = GetFilePathBySuffix(argc, dirPath, ".attack-b", dirExists);
+	Battackpath = GameBoardUtils::GetFilePathBySuffix(argc, dirPath, ".attack-b", dirExists);
 	if (Battackpath == "ERR") 
 	{
 		cout << "ERROR in retrieving attack file of player B" << endl;

@@ -2,6 +2,8 @@
 #include "GameBoardUtils.h"
 #include "IOLib.h"
 #include "Contants.h"
+#include <thread>
+#include <Windows.h>
 
 
 void GetWrongSizeErrMessage(char type, int player)
@@ -431,3 +433,125 @@ void GameBoardUtils::MarkCannotAttack(char** markBoard, int playernum,char** mai
 		}
 	}
 }
+
+/*
+* @param argc - of main program
+* @param argv - of main program
+* @param filesuffix - the suffix of the file we are searching for
+* @return path to .sboard file (non-default / "" in case the working directory is chosen )
+* @return "ERR" in case of error / file not found
+*/
+string GameBoardUtils::GetFilePathBySuffix(int argc, string customPath, string filesuffix, bool direxists = true) //TODO: check this is working after system() remove
+{
+	char currentdirectory[_MAX_PATH];
+	//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory
+	_fullpath(currentdirectory, ".\\", _MAX_PATH); // obtain current directory
+	string filename, suffix;
+	string delimiter = ".";
+	string nondefaultpath = customPath;
+	string systemcallcommand;
+	size_t pos;
+	string templine;
+	char buffer[4096];
+	FILE* fp;
+	if (argc > 1) {
+		if (direxists) {
+			fp = _popen(("2>NUL dir /a-d /b " + nondefaultpath).c_str(), "r");
+			while (fgets(buffer, 4095, fp))
+			{
+				templine = string(buffer);
+				pos = templine.find(delimiter);
+				suffix = templine.substr(pos, templine.length());
+				filename = templine.substr(0, pos);
+				if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
+					_pclose(fp);
+					if (nondefaultpath.at(nondefaultpath.length() - 1) == '\\') {
+						return nondefaultpath + filename + suffix; //argument is inserted with '\' at string ending
+					}
+					return nondefaultpath + '\\' + filename + suffix; //argument is inserted without '\' at ending
+				}
+			}
+			
+			//no more files to read from non - default path
+			if (filesuffix == ".sboard") {
+				cout << "Missing board file (*.sboard) looking in path: " << currentdirectory << endl;
+			}
+			else if (filesuffix == ".attack-a") {
+				cout << "Missing attack file for player A(*.attack - a) looking in path: " << currentdirectory << endl;
+			}
+			else {
+				cout << "Missing attack file for player B(*.attack - b) looking in path: " << currentdirectory << endl;
+			}
+			_pclose(fp);
+		}
+	}
+	fp = _popen(("2>NUL dir /a-d /b " + (string)currentdirectory).c_str(), "r");
+	while (fgets(buffer, 4095, fp))
+	{
+		templine = string(buffer);
+		pos = templine.find(delimiter);
+		suffix = templine.substr(pos, templine.length());
+		filename = templine.substr(0, pos);
+		if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
+			_pclose(fp);
+			if (nondefaultpath.at(nondefaultpath.length() - 1) == '\\') {
+				return nondefaultpath + filename + suffix; //argument is inserted with '\' at string ending
+			}
+			return nondefaultpath + '\\' + filename + suffix; //argument is inserted without '\' at ending
+		}
+	}
+
+	cout << filesuffix + " file was not found in working directory" << endl;
+	_pclose(fp);
+	return "ERR";
+}
+
+//taken from: http://stackoverflow.com/questions/8233842/how-to-check-if-directory-exist-using-c-and-winapi
+bool GameBoardUtils::DirExists(const std::string& dirName_in)
+{
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		return false;  //something is wrong with your path!
+
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   // this is a directory!
+
+	return false;    // this is not a directory!
+}
+
+char** GameBoardUtils::ClonePlayerBoard(const char** fullBoard, int i)
+{
+	char** playerBoard = GameBoardUtils::InitializeNewEmptyBoard();
+	GameBoardUtils::CloneBoardToPlayer(fullBoard, i, playerBoard);
+	return playerBoard;
+}
+
+void GameBoardUtils::ChangeFontSize()
+{
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_FONT_INFOEX orig = { sizeof(orig) };
+
+	if (GetCurrentConsoleFontEx(hStdout, FALSE, &orig))
+	{
+		//AppLogger.logFile << "Got\n"; //TODO: restore all instances here of applogger
+	}
+	else
+	{
+		//AppLogger.logFile << GetLastError
+	}
+
+	orig.dwFontSize.X = 12;
+	orig.dwFontSize.Y = 16;
+
+	if (SetCurrentConsoleFontEx(hStdout, FALSE, &orig))
+	{
+		//AppLogger.logFile << "Set\n";
+	}
+	else
+	{
+		//AppLogger.logFile << endl << GetLastError();
+	}
+
+}
+

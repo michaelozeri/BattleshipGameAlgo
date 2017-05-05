@@ -18,7 +18,7 @@
     <ClInclude Include="IBattleshipGameAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BattleshipGameAlgo.h">
+    <ClInclude Include="NaiveBattleshipGameAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

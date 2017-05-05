@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include "Contants.h"
+#include <thread>
 
 using namespace std;
 
@@ -23,4 +23,8 @@ public:
 	static void CloneBoardToPlayer(const char** full_board, int playerID, char** player_board);
 	static void CloneBoard(char** full_board, char** player_board);
 	static void MarkCannotAttack(char** markBoard, int playernum, char** mainBoard);
+	static string GetFilePathBySuffix(int argc, string customPath, string filesuffix, bool direxists = true);
+	static bool DirExists(const std::string& dirName_in);
+	static char** ClonePlayerBoard(const char** fullBoard, int i);
+	static void ChangeFontSize();
 };

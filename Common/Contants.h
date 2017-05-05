@@ -17,6 +17,8 @@
 
 enum class BoardFileErrorCode {Success, UnknownError};
 
+
+
 // A Player boat types representation 
 #define PlayerAID 0
 #define RubberBoatA 'B'
