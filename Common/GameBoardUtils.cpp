@@ -1,10 +1,8 @@
-
 #include "GameBoardUtils.h"
 #include "IOLib.h"
 #include "Contants.h"
 #include <thread>
 #include <Windows.h>
-
 
 void GetWrongSizeErrMessage(char type, int player)
 {

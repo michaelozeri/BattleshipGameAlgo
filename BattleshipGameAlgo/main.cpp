@@ -8,7 +8,7 @@ typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)();
 
 using namespace std;
 
-int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncType& playerA,GetAlgorithmFuncType& playerB,bool dirExists) {
+int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgorithmFuncType& playerB, bool dirExists) {
 
 	HANDLE dir;
 
@@ -49,7 +49,7 @@ int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncTyp
 			HINSTANCE hDll = LoadLibraryA(fullFileName.c_str()); // Notice: Unicode compatible version of LoadLibrary
 			if (!hDll)
 			{
-				std::cout << "could not load the dynamic library" << std::endl;
+				cout << "could not load the dynamic library" << endl;
 				return EXIT_FAILURE;
 			}
 
@@ -57,7 +57,7 @@ int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncTyp
 			GetAlgorithmFunc = (GetAlgorithmFuncType)GetProcAddress(hDll, "GetAlgorithm");
 			if (!GetAlgorithmFunc)
 			{
-				std::cout << "could not load function GetShape()" << std::endl;
+				cout << "could not load function GetShape()" << endl;
 				return EXIT_FAILURE;
 			}
 
@@ -77,9 +77,9 @@ int LoadDllFilesByOrder(int argc, char** argv,string dirPath,GetAlgorithmFuncTyp
 	}
 
 	//sort vector of algorithm names
-	std::sort(algoNames.begin(), algoNames.end());
-	string firstAlgoName = algoNames[0];
-	string secondAlgoName = algoNames[0];
+	sort(algoNames.begin(), algoNames.end());
+	string firstAlgoName = algoNames[0]; 
+	string secondAlgoName = algoNames[1];
 	
 	//find first algo implemantation in dll_vec
 	for (vitr=dll_vec.begin(); vitr != dll_vec.end(); ++vitr) {
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 	}
 
 	//TODO: check this function is working + add search in working directory in case less then 2 were found
-	if (LoadDllFilesByOrder(argc, argv, dirPath, getPlayerAAlgo, getPlayerBAlgo,dirExists)) {
+	if (LoadDllFilesByOrder(dirPath, getPlayerAAlgo, getPlayerBAlgo, dirExists)) {
 		cout << "Error loading dll files. exiting" << endl;
 		return -1; //TODO: release all and check is ok
 	}
@@ -294,7 +294,6 @@ int main(int argc, char* argv[])
 		{
 			// Flip players
 			playerIdToPlayNext = (playerIdToPlayNext == PlayerAID) ? PlayerBID : PlayerAID;
-			continue;
 		}
 		else
 		{
