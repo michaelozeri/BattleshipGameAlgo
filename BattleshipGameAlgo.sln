@@ -4,12 +4,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HWProject", "BattleshipGameAlgo\BattleshipGameAlgo.vcxproj", "{A93F2317-0E38-4EFB-A8A7-04D73E4B1989}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5} = {99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NaiveAlgo", "NaiveAlgo\NaiveAlgo.vcxproj", "{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5} = {99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PreDefinedStepsAlgo", "PreDefinedStepsAlgo\PreDefinedStepsAlgo.vcxproj", "{E68B8155-D10A-42AC-B054-ECA26811FE8A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5} = {99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmartAlgo", "SmartAlgo\SmartAlgo.vcxproj", "{B4F58822-C45A-448E-9B63-519D9C418258}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5} = {99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{99BDAFA2-3CC5-490B-9FE3-8FB5C865B3D5}"
 EndProject

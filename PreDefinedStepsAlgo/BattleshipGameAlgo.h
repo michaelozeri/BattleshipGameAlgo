@@ -4,7 +4,7 @@
 #include "../Common/AttackReciever.h"
 
 //a logger instance to log all data. initialized at main
-extern Logger AppLogger;
+//extern Logger AppLogger;
 
 
 /*

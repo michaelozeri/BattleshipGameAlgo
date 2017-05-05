@@ -440,7 +440,7 @@ void GameBoardUtils::MarkCannotAttack(char** markBoard, int playernum,char** mai
 * @return path to .sboard file (non-default / "" in case the working directory is chosen )
 * @return "ERR" in case of error / file not found
 */
-string GameBoardUtils::GetFilePathBySuffix(int argc, string customPath, string filesuffix, bool direxists = true) //TODO: check this is working after system() remove
+string GameBoardUtils::GetFilePathBySuffix(int argc, string customPath, string filesuffix, bool direxists) //TODO: check this is working after system() remove
 {
 	char currentdirectory[_MAX_PATH];
 	//reference: taken from : http://stackoverflow.com/questions/19691058/c-visual-studio-current-working-directory

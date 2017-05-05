@@ -2,8 +2,11 @@
 #include <thread>
 #include "../Common/GameBoardUtils.h"
 
+Logger BonusLogger;
+
 Bonus::Bonus(bool enable, int waitTimeout): enable(enable), waitInMiliseconds(waitTimeout), absX(0), absY(0)
 {
+	BonusLogger.InitLogger("Bonus.txt");
 }
 
 void Bonus::Init(char** board, int rows, int cols)
@@ -37,7 +40,7 @@ void* Bonus::GetstdOutHandle()
 
 	if (handle == INVALID_HANDLE_VALUE || handle == nullptr)
 	{
-		AppLogger.logFile << "[gotoxy] Failed to get std handle" << endl;
+		BonusLogger.logFile << "[gotoxy] Failed to get std handle" << endl;
 		return nullptr;
 	}
 	return handle;
@@ -50,16 +53,16 @@ RetVal Bonus::StoreCurrentConsoleState()
 	if(hstdout == nullptr)
 	{
 		//TODO: Missing
-		AppLogger.logFile << "Failed to store current console state" << endl;
+		BonusLogger.logFile << "Failed to store current console state" << endl;
 		return RetVal::UnknownError;
 	}
 	int retu = GetConsoleScreenBufferInfo(hstdout, &csbi);
 	
 	if(retu == 0)
 	{
-		AppLogger.logFile << "Failed to GetConsoleScreenBufferInfo";
-		AppLogger.logFile << "Error Code " + GetLastError() << endl;
-		AppLogger.logFile << "Failed to store current console state" << endl;
+		BonusLogger.logFile << "Failed to GetConsoleScreenBufferInfo";
+		BonusLogger.logFile << "Error Code " + GetLastError() << endl;
+		BonusLogger.logFile << "Failed to store current console state" << endl;
 		return RetVal::UnknownError;
 	}
 
@@ -83,7 +86,7 @@ RetVal Bonus::gotoxy(int x, int y, bool isAbsVal)
 	BOOL ret = SetConsoleCursorPosition(handle, coord);
 	if (ret == 0)
 	{
-		AppLogger.logFile << "[gotoxy] Failed to SetConsoleCursorPosition" << endl;
+		BonusLogger.logFile << "[gotoxy] Failed to SetConsoleCursorPosition" << endl;
 		return RetVal::UnknownError;
 	}
 	return RetVal::Success;
@@ -109,8 +112,8 @@ RetVal Bonus::SetTextColor(int playerID)
 	int retu = SetConsoleTextAttribute(handle, color);
 	if (retu == 0)
 	{
-		AppLogger.logFile << "Failed to SetConsoleTextAttribute";
-		AppLogger.logFile << "Error Code " + GetLastError() << endl;
+		BonusLogger.logFile << "Failed to SetConsoleTextAttribute";
+		BonusLogger.logFile << "Error Code " + GetLastError() << endl;
 		return RetVal::UnknownError;
 	}
 	return RetVal::Success;
@@ -122,7 +125,7 @@ RetVal Bonus::RestoreConsoleState()
 	if (hstdout == nullptr)
 	{
 		//TODO: Missing
-		AppLogger.logFile << "Failed to store current console state" << endl;
+		BonusLogger.logFile << "Failed to store current console state" << endl;
 		return RetVal::UnknownError;
 	}
 
@@ -130,8 +133,8 @@ RetVal Bonus::RestoreConsoleState()
 
 	if (retu == 0)
 	{
-		AppLogger.logFile << "Failed to SetConsoleTextAttribute";
-		AppLogger.logFile << "Error Code " + GetLastError() << endl;
+		BonusLogger.logFile << "Failed to SetConsoleTextAttribute";
+		BonusLogger.logFile << "Error Code " + GetLastError() << endl;
 		return RetVal::UnknownError;
 	}
 
@@ -146,16 +149,16 @@ RetVal Bonus::StoreCurrentCoord()
 	if (hstdout == nullptr)
 	{
 		//TODO: Missing
-		AppLogger.logFile << "Failed to store current console state" << endl;
+		BonusLogger.logFile << "Failed to store current console state" << endl;
 		return RetVal::UnknownError;
 	}
 	int retu = GetConsoleScreenBufferInfo(hstdout, &buf);
 
 	if (retu == 0)
 	{
-		AppLogger.logFile << "Failed to GetConsoleScreenBufferInfo";
-		AppLogger.logFile << "Error Code " + GetLastError() << endl;
-		AppLogger.logFile << "Failed to store current coordinated" << endl;
+		BonusLogger.logFile << "Failed to GetConsoleScreenBufferInfo";
+		BonusLogger.logFile << "Error Code " + GetLastError() << endl;
+		BonusLogger.logFile << "Failed to store current coordinated" << endl;
 		return RetVal::UnknownError;
 	}
 
@@ -178,14 +181,14 @@ void Bonus::PrintPlayerChar(char letter, short x, short y, int playerID, bool is
 	RetVal val = gotoxy(x, y);
 	if(val != RetVal::Success)
 	{
-		AppLogger.logFile << "Failed to PrintPlayerChar due to error in gotoxy";
+		BonusLogger.logFile << "Failed to PrintPlayerChar due to error in gotoxy";
 		return;
 	}
 
 	val = SetTextColor(currentPlayer);
 	if (val != RetVal::Success)
 	{
-		AppLogger.logFile << "Failed to SetTextColor due to error in gotoxy";
+		BonusLogger.logFile << "Failed to SetTextColor due to error in gotoxy";
 		return;
 	}
 
@@ -203,6 +206,7 @@ Bonus::~Bonus()
 	RetVal ret = RestoreConsoleState();
 	if (ret != RetVal::Success)
 	{
-		AppLogger.logFile << "Failed to RestoreConsoleState";
+		BonusLogger.logFile << "Failed to RestoreConsoleState";
 	}
+	BonusLogger.LoggerDispose();
 }

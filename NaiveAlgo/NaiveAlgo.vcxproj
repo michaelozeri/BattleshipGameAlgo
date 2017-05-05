@@ -25,6 +25,11 @@
   <ItemGroup>
     <ClCompile Include="NaiveBattleshipGameAlgo.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{99bdafa2-3cc5-490b-9fe3-8fb5c865b3d5}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C5239990-D8F9-46D9-8ECF-F1AA1C7BF4C5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

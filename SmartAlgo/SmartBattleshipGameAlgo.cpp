@@ -44,3 +44,13 @@ void SmartBattleshipGameAlgo::setBoard(int player, const char** board, int numRo
 		}
 	}
 }
+
+void SmartBattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
+{
+	
+}
+
+SmartBattleshipGameAlgo::~SmartBattleshipGameAlgo()
+{
+	
+}

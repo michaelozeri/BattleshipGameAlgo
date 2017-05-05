@@ -4,6 +4,7 @@
 #include <vector>
 #include "IBattleshipGameAlgo.h"
 
+Logger MainLogger;
 typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)();
 
 using namespace std;
@@ -97,12 +98,12 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 void SetPlayerBoards(char** board, IBattleshipGameAlgo* playerA, IBattleshipGameAlgo* playerB)
 {
 	char** playerAboard = GameBoardUtils::ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
-	AppLogger.logFile << "CloneBoardForA" << endl;
-	GameBoardUtils::PrintBoard(AppLogger.logFile, playerAboard, ROWS, COLS);
+	MainLogger.logFile << "CloneBoardForA" << endl;
+	GameBoardUtils::PrintBoard(MainLogger.logFile, playerAboard, ROWS, COLS);
 
 	char** playerBboard = GameBoardUtils::ClonePlayerBoard(const_cast<const char**>(board), PlayerBID);
-	AppLogger.logFile << "CloneBoardForB" << endl;
-	GameBoardUtils::PrintBoard(AppLogger.logFile, playerBboard, ROWS, COLS);
+	MainLogger.logFile << "CloneBoardForB" << endl;
+	GameBoardUtils::PrintBoard(MainLogger.logFile, playerBboard, ROWS, COLS);
 	playerA->setBoard(0,const_cast<const char**>(playerAboard), ROWS, COLS);
 	playerB->setBoard(1,const_cast<const char**>(playerBboard), ROWS, COLS);
 
@@ -112,7 +113,7 @@ void SetPlayerBoards(char** board, IBattleshipGameAlgo* playerA, IBattleshipGame
 
 void InitLogger()
 {
-	AppLogger.InitLogger("Battle.log");
+	MainLogger.InitLogger("Battle.log");
 }
 
 pair<int, int> GetNextPlayerAttack(int player_id,  IBattleshipGameAlgo* player_a, IBattleshipGameAlgo* player_b)
@@ -125,7 +126,7 @@ pair<int, int> GetNextPlayerAttack(int player_id,  IBattleshipGameAlgo* player_a
 		return player_b->attack();
 	}
 	// Fatal Error
-	AppLogger.logFile << "Fatal error occured. Attack move was asked for non exixting player id " << player_id << endl;
+	MainLogger.logFile << "Fatal error occured. Attack move was asked for non exixting player id " << player_id << endl;
 	return{ -1,-1 };
 }
 
@@ -218,7 +219,7 @@ int main(int argc, char* argv[])
 	string mainboardpath = GameBoardUtils::GetFilePathBySuffix(argc, dirPath,".sboard",dirExists);
 	if (mainboardpath == "ERR") {
 		cout << "ERROR occured while getting board path" << endl;
-		AppLogger.LoggerDispose();
+		MainLogger.LoggerDispose();
 		return -1;
 	}
 
@@ -228,10 +229,10 @@ int main(int argc, char* argv[])
 	if(GameBoardUtils::LoadBoardFromFile(mainGameBoard, ROWS, COLS, mainboardpath)!= BoardFileErrorCode::Success)
 	{
 		GameBoardUtils::DeleteBoard(mainGameBoard);
-		AppLogger.LoggerDispose();
+		MainLogger.LoggerDispose();
 		return -1;
 	}
-	GameBoardUtils::PrintBoard(AppLogger.logFile, mainGameBoard, ROWS, COLS);
+	GameBoardUtils::PrintBoard(MainLogger.logFile, mainGameBoard, ROWS, COLS);
 
 	//get attack files path
 	string Aattackpath, Battackpath;
@@ -240,7 +241,7 @@ int main(int argc, char* argv[])
 	{
 		cout << "ERROR in retrieving attack file of player A" << endl;
 		GameBoardUtils::DeleteBoard(mainGameBoard);
-		AppLogger.LoggerDispose();
+		MainLogger.LoggerDispose();
 		return -1;
 	}
 	Battackpath = GameBoardUtils::GetFilePathBySuffix(argc, dirPath, ".attack-b", dirExists);
@@ -248,7 +249,7 @@ int main(int argc, char* argv[])
 	{
 		cout << "ERROR in retrieving attack file of player B" << endl;
 		GameBoardUtils::DeleteBoard(mainGameBoard);
-		AppLogger.LoggerDispose();
+		MainLogger.LoggerDispose();
 		return -1;
 	}
 
@@ -286,7 +287,7 @@ int main(int argc, char* argv[])
 			GameBoardUtils::DeleteBoard(mainGameBoard);
 			delete playerAboardDetails;
 			delete playerBboardDetails;
-			AppLogger.LoggerDispose();
+			MainLogger.LoggerDispose();
 			return -1;
 		}
 
@@ -365,6 +366,6 @@ int main(int argc, char* argv[])
 	GameBoardUtils::DeleteBoard(mainGameBoard);
 	delete playerAboardDetails;
 	delete playerBboardDetails;	
-	AppLogger.LoggerDispose();
+	MainLogger.LoggerDispose();
 	return 0;
 }

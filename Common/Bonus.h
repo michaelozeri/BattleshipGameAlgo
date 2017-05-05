@@ -3,7 +3,7 @@
 #include <wincon.h>
 #include "IOLib.h"
 
-extern Logger AppLogger;
+//extern Logger BonusLogger;
 
 enum class RetVal { Success, UnknownError };
 
