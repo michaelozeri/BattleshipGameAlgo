@@ -12,6 +12,8 @@ using namespace std;
 
 int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgorithmFuncType& playerB, bool dirExists) {
 
+	char currentdirectory[_MAX_PATH];
+	_fullpath(currentdirectory, ".\\", _MAX_PATH); // obtain current directory
 	HANDLE dir;
 
 	WIN32_FIND_DATAA fileData; //data struct for file
@@ -32,9 +34,7 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 	string s = "\\*.dll"; // only .dll endings
 
 	if (!dirExists) {
-		char currentdirectory[_MAX_PATH];
-		_fullpath(currentdirectory, ".\\", _MAX_PATH); // obtain current directory
-		dirPath.assign(currentdirectory);
+		dirPath.assign(currentdirectory + (string)"Debug");
 	}
 
 	dir = FindFirstFileA((dirPath + s).c_str(), &fileData); 
@@ -71,11 +71,11 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 	}
 	else {
 		cout << "ERROR: could not load dll files" << endl;
-		return EXIT_FAILURE; //TODO: check if ok to exit like this
+		return EXIT_FAILURE; 
 	}
 	if (dll_vec.size() < 2) {
 		cout << "ERROR: not enough dll files" << endl;
-		return EXIT_FAILURE; //TODO: check is ok and we do not need to search working directory
+		return EXIT_FAILURE; //TODO: search working directory
 	}
 
 	//sort vector of algorithm names
@@ -96,7 +96,7 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 }
 
 
-void SetPlayerBoards(char** board, IBattleshipGameAlgo* playerA, IBattleshipGameAlgo* playerB)
+void SetPlayerBoards(char** board, IBattleshipGameAlgo*& playerA, IBattleshipGameAlgo*& playerB)
 {
 	char** playerAboard = GameBoardUtils::ClonePlayerBoard(const_cast<const char**>(board), PlayerAID);
 	MainLogger.logFile << "CloneBoardForA" << endl;
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	//TODO: check this function is working + add search in working directory in case less then 2 were found
+	//TODO: add search in working directory in case less then 2 were found + not working on command line with spaces
 	if (LoadDllFilesByOrder(dirPath, getPlayerAAlgo, getPlayerBAlgo, dirExists)) {
 		cout << "Error loading dll files. exiting" << endl;
 		return -1; //TODO: release all and check is ok
@@ -255,13 +255,14 @@ int main(int argc, char* argv[])
 	}
 
 	// Init players Instances
-	IBattleshipGameAlgo * algoA = getPlayerAAlgo();
-	IBattleshipGameAlgo * algoB = getPlayerBAlgo();
+	IBattleshipGameAlgo* algoA = getPlayerAAlgo();
+	IBattleshipGameAlgo* algoB = getPlayerBAlgo();
 
 	//setting player boards
 	SetPlayerBoards(mainGameBoard, algoA, algoB);
 	if (!(algoA->init(Aattackpath)) || !(algoB->init(Battackpath))) {
 		cout << "ERROR: could not init attack files" << endl;
+		return EXIT_FAILURE; //TODO: release all dynamic allocations
 	}
 
 	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside - (In next HW Next)

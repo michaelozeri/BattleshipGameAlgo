@@ -448,6 +448,7 @@ string GameBoardUtils::GetFilePathBySuffix(int argc, string customPath, string f
 	string filename, suffix;
 	string delimiter = ".";
 	string nondefaultpath = customPath;
+	nondefaultpath.erase(std::remove(nondefaultpath.begin(), nondefaultpath.end(), '"'), nondefaultpath.end());
 	string systemcallcommand;
 	size_t pos;
 	string templine;
@@ -455,12 +456,16 @@ string GameBoardUtils::GetFilePathBySuffix(int argc, string customPath, string f
 	FILE* fp;
 	if (argc > 1) {
 		if (direxists) {
-			fp = _popen(("2>NUL dir /a-d /b " + nondefaultpath).c_str(), "r");
+			fp = _popen(("2>NUL dir /a-d /b "+ nondefaultpath).c_str(), "r");
 			while (fgets(buffer, 4095, fp))
 			{
 				templine = string(buffer);
 				pos = templine.find(delimiter);
 				suffix = templine.substr(pos, templine.length());
+				if((suffix.at(suffix.length()-1))=='\n')
+				{
+					suffix = suffix.substr(0, suffix.length() - 1);
+				}
 				filename = templine.substr(0, pos);
 				if (!strcmp(suffix.c_str(), filesuffix.c_str())) {
 					_pclose(fp);

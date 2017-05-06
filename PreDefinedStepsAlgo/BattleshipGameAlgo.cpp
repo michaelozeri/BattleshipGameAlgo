@@ -11,11 +11,6 @@ PreDefinedBattleshipGameAlgo::PreDefinedBattleshipGameAlgo() : m_myPlayerNum(0),
 {
 }
 
-//non - default constructor
-PreDefinedBattleshipGameAlgo::PreDefinedBattleshipGameAlgo(const std::string & attackPath, const int playerNum) : m_myPlayerNum(playerNum), m_attacksDone(false), m_board(nullptr)
-{
-	m_attackReceiver = new AttackReciever(attackPath);
-}
 
 /*
  * \brief 
@@ -42,6 +37,7 @@ this function is called at startup to update each players board game
 */
 void PreDefinedBattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols)
 {
+	m_myPlayerNum = player;
 	m_board = GameBoardUtils::InitializeNewEmptyBoard();
 	GameBoardUtils::CloneBoardToPlayer(board, m_myPlayerNum, m_board);
 }
@@ -68,6 +64,7 @@ bool PreDefinedBattleshipGameAlgo::AttacksDone() const
 
 bool PreDefinedBattleshipGameAlgo::init(const std::string& path)
 {
+	m_attackReceiver = new AttackReciever(path); //TODO: need to init the attack file here
 	return true;
 }
 

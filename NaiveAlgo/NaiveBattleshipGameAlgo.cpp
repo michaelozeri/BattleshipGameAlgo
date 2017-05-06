@@ -39,7 +39,7 @@ std::pair<int,int> NaiveBattleshipGameAlgo::attack()
 					m_currentAttack.first = i;
 					m_currentAttack.second = j+1;
 				}
-				return pair<int, int>{m_currentAttack.first, m_currentAttack.second};
+				return pair<int, int>{m_currentAttack.first+1, m_currentAttack.second+1};
 			}
 			j++;
 		}
@@ -56,9 +56,9 @@ this function is called at startup to update each players board game
 */
 void NaiveBattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols)
 {
-	//setting current attack to (0,0)
-	m_currentAttack.first = 0;
-	m_currentAttack.second = 0;
+	//setting current attack to (1,1)
+	m_currentAttack.first = 1;
+	m_currentAttack.second = 1;
 	m_myPlayerNum = player;
 	m_board = GameBoardUtils::InitializeNewEmptyBoard();
 	m_cannotAttackBoard = GameBoardUtils::InitializeNewEmptyBoard();
@@ -83,10 +83,18 @@ void NaiveBattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col,
 	//TODO: complete notify - is it needed at all?
 }
 
+/*
+ * destructor
+ */
 NaiveBattleshipGameAlgo::~NaiveBattleshipGameAlgo()
 {
 	GameBoardUtils::DeleteBoard(m_board);
 	GameBoardUtils::DeleteBoard(m_cannotAttackBoard);
+}
+
+bool NaiveBattleshipGameAlgo::init(const std::string& path)
+{
+	return true; //return true always because doesnt need to init nothing
 }
 
 IBattleshipGameAlgo* GetAlgorithm()

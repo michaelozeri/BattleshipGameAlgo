@@ -16,8 +16,6 @@ class PreDefinedBattleshipGameAlgo : public IBattleshipGameAlgo
 public:
 	//defult constructor
 	PreDefinedBattleshipGameAlgo();
-	//non-defult constructor
-	PreDefinedBattleshipGameAlgo(const std::string& attackPath, const int playerNum);
 	//Getters
 	bool AttacksDone() const;
 	//IBattleshipGameAlgo	
