@@ -1,16 +1,20 @@
 #include "SmartBattleshipGameAlgo.h"
 #include "../Common/GameBoardUtils.h"
 
-std::pair<int, int> SmartBattleshipGameAlgo::attack()
+pair<int, int> SmartBattleshipGameAlgo::attack()
 {
+	pair<int, int> currentAttack;
+	srand(time(NULL));
+
 	if(m_randomMode)
 	{
+		int randomLocation = rand() % m_attacksRemain.size();
+		currentAttack = m_attacksRemain[randomLocation];
+		m_attacksRemain.erase(m_attacksRemain.begin() + randomLocation-1); // liga!
+		return currentAttack;
+	}
+	//sink ship mode
 	
-	}
-	else //sink ship mode
-	{
-		
-	}
 
 	return {};
 }
@@ -20,6 +24,7 @@ this function is called at startup to update each players board game
 */
 void SmartBattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols)
 {
+	m_attacksRemain.size();
 	m_myPlayerNum = player;
 	m_board = GameBoardUtils::InitializeNewEmptyBoard();
 	m_cannotAttackBoard = GameBoardUtils::InitializeNewEmptyBoard();
@@ -39,7 +44,7 @@ void SmartBattleshipGameAlgo::setBoard(int player, const char** board, int numRo
 		{
 			if(m_cannotAttackBoard[i][j] == 'X') //if we can attack at that spot
 			{
-				//TODO: insert into specific place where random out of it the attacks
+				m_attacksRemain.push_back(pair<int, int>(i,j));
 			}
 		}
 	}
@@ -47,7 +52,32 @@ void SmartBattleshipGameAlgo::setBoard(int player, const char** board, int numRo
 
 void SmartBattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
-	
+	if(m_myPlayerNum == player)
+	{
+		if (m_randomMode)
+		{
+			if(result == AttackResult::Hit)
+			{
+				m_randomMode = 0;
+			}
+			//else - sink || Miss - stay random
+			else
+			{
+				m_randomMode = 1;
+			}
+		}
+		else
+		{
+			if(result == AttackResult::Hit)
+			{
+				
+			}
+		}
+	}
+	else
+	{
+		
+	}
 }
 
 SmartBattleshipGameAlgo::~SmartBattleshipGameAlgo()
@@ -57,7 +87,7 @@ SmartBattleshipGameAlgo::~SmartBattleshipGameAlgo()
 
 bool SmartBattleshipGameAlgo::init(const string& path)
 {
-	return true;
+	return true; //TOOD: is ok here to return true always? because doesnt need to init file
 }
 
 /*
