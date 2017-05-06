@@ -2,6 +2,7 @@
 
 #include "Contants.h"
 #include <thread>
+#include "IOLib.h"
 
 using namespace std;
 
@@ -27,4 +28,5 @@ public:
 	static bool DirExists(const std::string& dirName_in);
 	static char** ClonePlayerBoard(const char** fullBoard, int i);
 	static void ChangeFontSize();
+	static void InitLogger(Logger& logger,string logpath);
 };

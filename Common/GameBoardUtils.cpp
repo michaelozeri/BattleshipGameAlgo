@@ -559,3 +559,10 @@ void GameBoardUtils::ChangeFontSize()
 
 }
 
+void GameBoardUtils::InitLogger(Logger& logger,string logpath)
+{
+	logger.InitLogger(logpath);
+}
+
+
+

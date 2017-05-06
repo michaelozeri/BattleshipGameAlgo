@@ -6,6 +6,7 @@
 #include "Windows.h"
 
 Logger MainLogger;
+
 typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)();
 
 using namespace std;
@@ -95,6 +96,32 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 	return 0;
 }
 
+void PrintPoints(ShipDetailsBoard* playerA, ShipDetailsBoard* playerB)
+{
+	cout << "Points:" << endl;
+	cout << "Player A: " << playerB->negativeScore << endl;
+	cout << "Player B: " << playerA->negativeScore << endl;
+}
+
+void PrintSinkCharRec(char** maingameboard, Bonus* b, int i, int j, int player)
+{
+	if (i < 0 || i >= ROWS || j < 0 || j >= COLS) // Stop recursion condition
+	{
+		return;
+	}
+
+	char currentCell = maingameboard[i][j];
+	if (currentCell != HIT_CHAR)
+		return;
+
+	maingameboard[i][j] = SINK_CHAR;
+	b->PrintPlayerChar(maingameboard[i][j], j, i, player);
+	PrintSinkCharRec(maingameboard, b, i, j - 1, player);
+	PrintSinkCharRec(maingameboard, b, i, j + 1, player);
+	PrintSinkCharRec(maingameboard, b, i - 1, j, player);
+	PrintSinkCharRec(maingameboard, b, i + 1, j, player);
+}
+
 
 void SetPlayerBoards(char** board, IBattleshipGameAlgo*& playerA, IBattleshipGameAlgo*& playerB)
 {
@@ -110,11 +137,6 @@ void SetPlayerBoards(char** board, IBattleshipGameAlgo*& playerA, IBattleshipGam
 
 	GameBoardUtils::DeleteBoard(playerAboard);
 	GameBoardUtils::DeleteBoard(playerBboard);
-}
-
-void InitLogger()
-{
-	MainLogger.InitLogger("Battle.log");
 }
 
 pair<int, int> GetNextPlayerAttack(int player_id,  IBattleshipGameAlgo* player_a, IBattleshipGameAlgo* player_b)
@@ -141,32 +163,6 @@ bool IsPlayerWon(int currentPlayer, ShipDetailsBoard* detailsA, ShipDetailsBoard
 	return currentPlayer == PlayerAID ? detailsB->IsLoose() : detailsA->IsLoose();
 }
 
-void PrintPoints(ShipDetailsBoard* playerA, ShipDetailsBoard* playerB)
-{
-	cout << "Points:" << endl;
-	cout << "Player A: " << playerB->negativeScore << endl;
-	cout << "Player B: " << playerA->negativeScore << endl;
-}
-
-
-void PrintSinkCharRec(char** maingameboard,Bonus* b , int i, int j, int player)
-{
-	if (i < 0 || i >= ROWS || j < 0 || j >= COLS) // Stop recursion condition
-	{
-		return;
-	}
-
-	char currentCell = maingameboard[i][j];
-	if (currentCell != HIT_CHAR)
-		return;
-
-	maingameboard[i][j] = SINK_CHAR;
-	b->PrintPlayerChar(maingameboard[i][j], j, i, player);
-	PrintSinkCharRec(maingameboard,b, i, j - 1, player);
-	PrintSinkCharRec(maingameboard,b, i, j + 1, player);
-	PrintSinkCharRec(maingameboard,b, i - 1, j, player);
-	PrintSinkCharRec(maingameboard,b, i + 1, j, player);
-}
 
 int main(int argc, char* argv[]) 
 {
@@ -175,7 +171,7 @@ int main(int argc, char* argv[])
 	bool dirExists = false; 
 	bool AattacksDone = false;
 	bool BattacksDone = false;
-	InitLogger();
+	GameBoardUtils::InitLogger(MainLogger,"Battle.log");
                    
 	GameBoardUtils::ChangeFontSize();
 	BonusParams p; 
