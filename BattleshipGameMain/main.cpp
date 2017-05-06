@@ -265,7 +265,6 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE; //TODO: release all dynamic allocations
 	}
 
-	//TODO: maybe change this inside BattleShipGameAlgo class instead of outside - (In next HW Next)
 	ShipDetailsBoard* playerAboardDetails = new ShipDetailsBoard(mainGameBoard, PlayerAID);
 	ShipDetailsBoard* playerBboardDetails = new ShipDetailsBoard(mainGameBoard, PlayerBID);
 
@@ -292,9 +291,18 @@ int main(int argc, char* argv[])
 			MainLogger.LoggerDispose();
 			return -1;
 		}
-
+		//end of attacks
 		if ((tempPair.first == -1) && (tempPair.second == -1))
 		{
+			if(playerIdToPlayNext)
+			{
+				//cout << "AattacksDone!" << endl; //TODO: remove
+				AattacksDone = true;
+			}
+			else
+			{
+				BattacksDone = true;
+			}
 			// Flip players
 			playerIdToPlayNext = (playerIdToPlayNext == PlayerAID) ? PlayerBID : PlayerAID;
 		}

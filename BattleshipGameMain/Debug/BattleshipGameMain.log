@@ -1,5 +1,4 @@
-﻿  ShipDetailsBoard.cpp
-  main.cpp
-  Generating Code...
+﻿  main.cpp
+cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
   BattleshipGameMain.vcxproj -> C:\Users\mozeri\Documents\Visual Studio 2015\Projects\BattleshipGameAlgo\Debug\BattleshipGameMain.exe
   BattleshipGameMain.vcxproj -> C:\Users\mozeri\Documents\Visual Studio 2015\Projects\BattleshipGameAlgo\Debug\BattleshipGameMain.pdb (Full PDB)

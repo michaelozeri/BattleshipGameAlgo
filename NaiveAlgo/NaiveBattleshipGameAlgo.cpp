@@ -16,6 +16,8 @@ std::pair<int,int> NaiveBattleshipGameAlgo::attack()
 		return{ 0,0 };
 	}
 
+	int returnattacki, returnattackj;
+
 	//convert back to our matrix coordinates
 	int i=m_currentAttack.first-1;
 	int j = m_currentAttack.second-1;
@@ -23,23 +25,26 @@ std::pair<int,int> NaiveBattleshipGameAlgo::attack()
 	//find next attack
 	while(i<ROWS)
 	{
+		j = 0;
 		while(j<COLS)
 		{
 			if(m_cannotAttackBoard[i][j] == 'X') 
 			{
 				//set cannot attack this spot again
 				m_cannotAttackBoard[i][j] = 'V';
+				returnattacki = i + 1;
+				returnattackj = j + 1;
 				//set the next index to search from
 				if(j == COLS-1)
 				{
-					m_currentAttack.first = i + 1;
-					m_currentAttack.second = 0;
+					m_currentAttack.first = i + 2;
+					m_currentAttack.second = 1;
 				}
 				else{
-					m_currentAttack.first = i;
-					m_currentAttack.second = j+1;
+					m_currentAttack.first = i+1;
+					m_currentAttack.second = j+2;
 				}
-				return pair<int, int>{m_currentAttack.first+1, m_currentAttack.second+1};
+				return pair<int, int>{returnattacki, returnattackj};
 			}
 			j++;
 		}
