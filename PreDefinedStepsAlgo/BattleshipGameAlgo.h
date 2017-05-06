@@ -11,20 +11,21 @@
 * a class that represents a player at the game
 * holds the current information of the player while playing the game
 */
-class BattleshipGameAlgo : public IBattleshipGameAlgo 
+class PreDefinedBattleshipGameAlgo : public IBattleshipGameAlgo 
 {
 public:
-	//constructor
-	BattleshipGameAlgo(const std::string& attackPath, const int playerNum);
-
+	//defult constructor
+	PreDefinedBattleshipGameAlgo();
+	//non-defult constructor
+	PreDefinedBattleshipGameAlgo(const std::string& attackPath, const int playerNum);
 	//Getters
 	bool AttacksDone() const;
-
 	//IBattleshipGameAlgo	
 	void setBoard(int player,const char** board, int numRows, int numCols) override; // called once to notify player on his board
 	std::pair<int, int> attack() override; // ask player for his move
 	void notifyOnAttackResult(int player, int row, int col, AttackResult result) override; // notify on last move result
-	~BattleshipGameAlgo();
+	~PreDefinedBattleshipGameAlgo();
+	bool init(const std::string& path);
 private:
 	//My player number
 	int m_myPlayerNum;

@@ -9,7 +9,7 @@
  * \brief 
  * \return (0,0) in case of EOF. (-1, -1) in case of any failure
  */
-std::pair<int,int> BattleshipGameAlgo::attack()
+std::pair<int,int> NaiveBattleshipGameAlgo::attack()
 {
 	if(m_attacksDone)
 	{
@@ -54,7 +54,7 @@ std::pair<int,int> BattleshipGameAlgo::attack()
 /*
 this function is called at startup to update each players board game
 */
-void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols) 
+void NaiveBattleshipGameAlgo::setBoard(int player, const char** board, int numRows, int numCols)
 {
 	//setting current attack to (0,0)
 	m_currentAttack.first = 0;
@@ -78,15 +78,20 @@ void BattleshipGameAlgo::setBoard(int player, const char** board, int numRows, i
 this function only updates board of player & adds score if needed.
 checking of if the game is ended will be at main function
 */
-void BattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result) 
+void NaiveBattleshipGameAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
 	//TODO: complete notify - is it needed at all?
 }
 
-BattleshipGameAlgo::~BattleshipGameAlgo()
+NaiveBattleshipGameAlgo::~NaiveBattleshipGameAlgo()
 {
 	GameBoardUtils::DeleteBoard(m_board);
 	GameBoardUtils::DeleteBoard(m_cannotAttackBoard);
+}
+
+IBattleshipGameAlgo* GetAlgorithm()
+{
+	return (new NaiveBattleshipGameAlgo());
 }
 
 

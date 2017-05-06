@@ -15,6 +15,7 @@ public:
 	pair<int, int> attack() override; // ask player for his move
 	void notifyOnAttackResult(int player, int row, int col, AttackResult result) override; // notify on last move result
 	~SmartBattleshipGameAlgo();
+	bool init(const std::string& path) override;
 private:
 	int m_randomMode = 1;
 	//My player number

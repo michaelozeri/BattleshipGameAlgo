@@ -3,6 +3,7 @@
 #include "../Common/Bonus.h"
 #include <vector>
 #include "IBattleshipGameAlgo.h"
+#include "Windows.h"
 
 Logger MainLogger;
 typedef IBattleshipGameAlgo *(*GetAlgorithmFuncType)();
@@ -23,7 +24,7 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 	// define function of the type we expect
 	
 	GetAlgorithmFuncType GetAlgorithmFunc;
-	vector<tuple<string, HINSTANCE, GetAlgorithmFuncType>> dll_vec; // vector of <Shape Name, dll handle, GetShape function ptr>
+	vector<tuple<string, HINSTANCE, GetAlgorithmFuncType>> dll_vec; // vector of <Algo Name, dll handle, GetAlgorithm function ptr>
 	vector<tuple<string, HINSTANCE, GetAlgorithmFuncType>>::iterator vitr;
 	vector<string> algoNames;
 
@@ -58,7 +59,7 @@ int LoadDllFilesByOrder(string dirPath, GetAlgorithmFuncType& playerA, GetAlgori
 			GetAlgorithmFunc = (GetAlgorithmFuncType)GetProcAddress(hDll, "GetAlgorithm");
 			if (!GetAlgorithmFunc)
 			{
-				cout << "could not load function GetShape()" << endl;
+				cout << "could not load function GetAlgorithm()" << endl;
 				return EXIT_FAILURE;
 			}
 
@@ -199,7 +200,7 @@ int main(int argc, char* argv[])
 				dirPath = argv[i];
 			}
 		}
-		if (dirPath.compare("NS") != 0)
+		if (dirPath.compare("NS"))
 		{
 			dirExists = GameBoardUtils::DirExists(dirPath);
 			if (!dirExists) 

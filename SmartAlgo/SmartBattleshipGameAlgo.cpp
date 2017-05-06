@@ -54,3 +54,16 @@ SmartBattleshipGameAlgo::~SmartBattleshipGameAlgo()
 {
 	
 }
+
+bool SmartBattleshipGameAlgo::init(const string& path)
+{
+	return true;
+}
+
+/*
+ * for exporting this algo in main
+ */
+IBattleshipGameAlgo* GetAlgorithm()
+{
+	return (new SmartBattleshipGameAlgo());
+}
